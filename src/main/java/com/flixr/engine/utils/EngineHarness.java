@@ -83,7 +83,10 @@ public class EngineHarness {
         int DEBUG_1 = 0;
 
         // Trains the Recommendation Engine
+        long startTime = System.currentTimeMillis();
         engineHarness.trainModel();
+        long endTime = System.currentTimeMillis();
+        System.out.println("\nTotal Run Time: " + (endTime - startTime) + " ms.");
 
         int DEBUG_2 = 0;
     }

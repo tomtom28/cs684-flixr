@@ -3,6 +3,7 @@ package com.flixr.engine;
 import com.flixr.engine.utils.EngineInput;
 import com.flixr.engine.utils.RecommendationEngineException;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -128,22 +129,67 @@ public class RecommendationEngine {
 
                 }
             }
+
+            // Print progress
+            System.out.println("Part 1 of 2: Completed Row " + i + " of " + movieCount);
+
         }
 
 
-        // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
-        for (int i = 0; i < movieCount; i++) {
-            for (int j = 0; j < movieCount; j++) {
-                // Only average movies that were rated
-                if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
-                    matrixOfMovieToMovieCorrelation[i][j] = matrixOfMovieToMovieRatingDifferenceSums[i][j] / matrixOfMovieToMovieRatingFrequency[i][j];
+//        // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
+//        for (int i = 0; i < movieCount; i++) {
+//            for (int j = 0; j < movieCount; j++) {
+//                // Only average movies that were rated
+//                if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
+//                    matrixOfMovieToMovieCorrelation[i][j] = matrixOfMovieToMovieRatingDifferenceSums[i][j] / matrixOfMovieToMovieRatingFrequency[i][j];
+//                }
+//            }
+//            // Print progress
+//            System.out.println("Part 2 of 2: Completed Row " + i + " of " + movieCount);
+//        }
+
+
+        // TODO make this more robust later, many an overloaded constructor
+        String pathName = System.getProperty("user.dir");
+        String fileName = "/test_data/engine-output.csv";
+
+
+        try {
+            PrintWriter writer = new PrintWriter(pathName + fileName, "UTF-8");
+            writer.println("MovieID_i,MovieId_j,correlation");
+
+            // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
+            for (int i = 0; i < movieCount; i++) {
+                for (int j = 0; j < movieCount; j++) {
+                    // Only average movies that were rated
+                    if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
+                        matrixOfMovieToMovieCorrelation[i][j] = matrixOfMovieToMovieRatingDifferenceSums[i][j] / matrixOfMovieToMovieRatingFrequency[i][j];
+                    }
+
+                    // Write to File
+                    writer.println(matrixIndexToMovieId.get(i) + "," +matrixIndexToMovieId.get(j) + "," + matrixOfMovieToMovieRatingDifferenceSums[i][j]);
+
                 }
+
+
+                // Print progress
+                System.out.println("Part 2 of 2: Completed Row " + i + " of " + movieCount);
             }
+
+            writer.close();
+
+        } catch (Exception e) {
+//            throw new Exception(e);
         }
+
+
+
 
         int DEBUG = 0;
 
     }
+
+
 
 
 }
