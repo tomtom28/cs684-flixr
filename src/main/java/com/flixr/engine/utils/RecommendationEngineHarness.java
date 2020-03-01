@@ -1,6 +1,8 @@
 package com.flixr.engine.utils;
 
 import com.flixr.engine.RecommendationEngine;
+import com.flixr.engine.exceptions.EngineException;
+import com.flixr.engine.io.RecEngineInput;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,21 +18,22 @@ import java.util.TreeSet;
  * Purpose is for backend testing / development
  *
  */
-public class EngineTrainer {
+public class RecommendationEngineHarness {
 
-    private List<EngineInput> engineInputs;
+    private List<RecEngineInput> recEngineInputs;
     private TreeSet<Integer> sortedListOfMovieIds;
 
-    public EngineTrainer() {
-        this.engineInputs = new ArrayList<>();
+    public RecommendationEngineHarness() {
+        this.recEngineInputs = new ArrayList<>();
         this.sortedListOfMovieIds = new TreeSet<>();
     }
 
     // Reads file, assuming it is in CSV format
     private void readInputFile(String inputFilePath) {
         String line = null;
+        BufferedReader bufferedReader = null;
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
+            bufferedReader = new BufferedReader(new FileReader(inputFilePath));
             bufferedReader.readLine(); // skips header row
             while ( (line = bufferedReader.readLine()) != null ) {
 
@@ -41,12 +44,13 @@ public class EngineTrainer {
                 double rating = Double.parseDouble(input[2]);
 
                 // Add to list of inputs
-                EngineInput engineInput = new EngineInput(userId, movieId, rating);
-                engineInputs.add(engineInput);
+                RecEngineInput recEngineInput = new RecEngineInput(userId, movieId, rating);
+                recEngineInputs.add(recEngineInput);
 
                 // Add to list of (unique) sorted MovieIds
                 sortedListOfMovieIds.add(movieId);
             }
+            bufferedReader.close();
         } catch (IOException e) {
             System.out.println("Unable to read input file: \n" + inputFilePath);
             e.printStackTrace();
@@ -60,29 +64,32 @@ public class EngineTrainer {
     private void trainModel(String outputFilePath) {
         RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
         try {
-            recommendationEngine.trainModel(engineInputs, outputFilePath);
-        } catch (RecommendationEngineException e) {
+            recommendationEngine.trainModel(recEngineInputs, outputFilePath);
+        } catch (EngineException e) {
             System.out.println("Error during training of the RecommendationEngine!");
             System.out.println(e.getEngineMessage());
         }
 
     }
 
-    // Creates an EngineTrainer for Standalone model training
+    // Creates an RecommendationEngineHarness for Standalone model training
     public static void main(String[] args) {
+
+        // Select Training File Name
+        String ratingFileName = "ml-small-ratings";
 
         // Selects a Input/Output CSV Files
         String pathName = System.getProperty("user.dir");
-        String inputFile = "/test_data/ml-latest-extra-small-ratings.csv";
-        String outputFile = "/test_data/engine-output.csv";
+        String inputFile = "/test_data/" + ratingFileName + ".csv";
+        String outputFile = "/test_data/outputs/models/model-" + ratingFileName + ".csv";
 
         // Create Engine Harness (which generates input objects)
-        EngineTrainer engineTrainer = new EngineTrainer();
-        engineTrainer.readInputFile(pathName + inputFile);
+        RecommendationEngineHarness recommendationEngineHarness = new RecommendationEngineHarness();
+        recommendationEngineHarness.readInputFile(pathName + inputFile);
 
         // Trains the Recommendation Engine (and saves to CSV)
         long startTime = System.currentTimeMillis();
-        engineTrainer.trainModel(pathName + outputFile);
+        recommendationEngineHarness.trainModel(pathName + outputFile);
         long endTime = System.currentTimeMillis();
         System.out.println("\nTotal Run Time: " + (endTime - startTime) + " ms.");
 

@@ -1,5 +1,5 @@
 package com.flixr.dao;
 
-public class RecommendationDAO {
+public class EngineDAO {
     // todo
 }

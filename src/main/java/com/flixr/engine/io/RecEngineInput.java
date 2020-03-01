@@ -1,4 +1,4 @@
-package com.flixr.engine.utils;
+package com.flixr.engine.io;
 
 /**
  * @author Thomas Thompson
@@ -7,13 +7,13 @@ package com.flixr.engine.utils;
  * Passed as an input to the RecommendationEngine
  *
  */
-public class EngineInput {
+public class RecEngineInput {
 
     private int userId;
     private int movieId;
     private double rating;
 
-    public EngineInput(int userId, int movieId, double rating) {
+    public RecEngineInput(int userId, int movieId, double rating) {
         this.userId = userId;
         this.movieId = movieId;
         this.rating = rating;

@@ -1,4 +1,10 @@
-package com.flixr.beans;
+package com.flixr.interfaces;
 
-public class Prediction {
+/**
+ * @author Thomas Thompson
+ *
+ * This represents a Prediction from the Recommendation Engine
+ *
+ */
+public interface IPrediction {
 }

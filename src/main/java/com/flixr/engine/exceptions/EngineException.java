@@ -6,11 +6,11 @@ package com.flixr.engine.exceptions;
  * Reports errors back to calling methods of the Recommendation Engine
  *
  */
-public class RecommendationEngineException extends Exception {
+public class EngineException extends Exception {
 
     private String engineMessage = "Unknown error during training of the Recommendation Engine.";
 
-    public RecommendationEngineException(Exception e) {
+    public EngineException(Exception e) {
         super(e);
     }
 
