@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -17,20 +16,18 @@ import java.util.TreeSet;
  * Purpose is for backend testing / development
  *
  */
-public class EngineHarness {
+public class EngineTrainer {
 
-    private String inputFilePath;
     private List<EngineInput> engineInputs;
     private TreeSet<Integer> sortedListOfMovieIds;
 
-    public EngineHarness(String inputFilePath) {
-        this.inputFilePath = inputFilePath;
+    public EngineTrainer() {
         this.engineInputs = new ArrayList<>();
         this.sortedListOfMovieIds = new TreeSet<>();
     }
 
     // Reads file, assuming it is in CSV format
-    private void readInputFile() {
+    private void readInputFile(String inputFilePath) {
         String line = null;
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilePath));
@@ -59,36 +56,36 @@ public class EngineHarness {
         }
     }
 
-    // Trains the model
-    private void trainModel() {
+    // Trains the model (and saves to CSV)
+    private void trainModel(String outputFilePath) {
         RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
-//        RecommendationEngine recommendationEngine = new RecommendationEngine(3952);
         try {
-            recommendationEngine.trainModel(engineInputs);
+            recommendationEngine.trainModel(engineInputs, outputFilePath);
         } catch (RecommendationEngineException e) {
             System.out.println("Error during training of the RecommendationEngine!");
-            System.out.println(e.getMessage());
+            System.out.println(e.getEngineMessage());
         }
 
     }
 
+    // Creates an EngineTrainer for Standalone model training
     public static void main(String[] args) {
 
-        // Selects a CSV to parse
+        // Selects a Input/Output CSV Files
         String pathName = System.getProperty("user.dir");
-        String fileName = "/test_data/ml-latest-small-ratings.csv";
-        EngineHarness engineHarness = new EngineHarness(pathName + fileName);
-        engineHarness.readInputFile();
+        String inputFile = "/test_data/ml-latest-extra-small-ratings.csv";
+        String outputFile = "/test_data/engine-output.csv";
 
-        int DEBUG_1 = 0;
+        // Create Engine Harness (which generates input objects)
+        EngineTrainer engineTrainer = new EngineTrainer();
+        engineTrainer.readInputFile(pathName + inputFile);
 
-        // Trains the Recommendation Engine
+        // Trains the Recommendation Engine (and saves to CSV)
         long startTime = System.currentTimeMillis();
-        engineHarness.trainModel();
+        engineTrainer.trainModel(pathName + outputFile);
         long endTime = System.currentTimeMillis();
         System.out.println("\nTotal Run Time: " + (endTime - startTime) + " ms.");
 
-        int DEBUG_2 = 0;
     }
 
 }
