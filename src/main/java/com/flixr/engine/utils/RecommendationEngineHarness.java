@@ -2,14 +2,12 @@ package com.flixr.engine.utils;
 
 import com.flixr.engine.RecommendationEngine;
 import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.RecEngineInput;
+import com.flixr.engine.io.UserSubmission;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Thomas Thompson
@@ -20,12 +18,12 @@ import java.util.TreeSet;
  */
 public class RecommendationEngineHarness {
 
-    private List<RecEngineInput> recEngineInputs;
     private TreeSet<Integer> sortedListOfMovieIds;
+    private TreeMap<Integer, UserSubmission> sortedListOfUserSubmissions;
 
     public RecommendationEngineHarness() {
-        this.recEngineInputs = new ArrayList<>();
         this.sortedListOfMovieIds = new TreeSet<>();
+        this.sortedListOfUserSubmissions = new TreeMap<>();
     }
 
     // Reads file, assuming it is in CSV format
@@ -43,9 +41,8 @@ public class RecommendationEngineHarness {
                 int movieId = Integer.parseInt(input[1]);
                 double rating = Double.parseDouble(input[2]);
 
-                // Add to list of inputs
-                RecEngineInput recEngineInput = new RecEngineInput(userId, movieId, rating);
-                recEngineInputs.add(recEngineInput);
+                // Process current entry into List of UserSubmissions
+                processRating(userId, movieId, rating);
 
                 // Add to list of (unique) sorted MovieIds
                 sortedListOfMovieIds.add(movieId);
@@ -60,11 +57,30 @@ public class RecommendationEngineHarness {
         }
     }
 
+
+    // Maps all UserIds to submitted (Movie, Rating) pairs
+    // NOTE: recEngineInputs must be sorted by UserId
+    private void processRating(int userId, int movieId, double rating) {
+
+        // Determine current User Submission
+        UserSubmission userSubmission;
+        if (!sortedListOfUserSubmissions.keySet().contains(userId)) { // New UserId was found
+            userSubmission = new UserSubmission(userId);
+            sortedListOfUserSubmissions.put(userId, userSubmission);
+        }
+        else { // Append to existing UserId entry
+            userSubmission = sortedListOfUserSubmissions.get(userId);
+        }
+
+        // Add (MovieId, Rating) tuple to User Submission
+        userSubmission.addMovieRating(movieId,rating);
+    }
+
     // Trains the model (and saves to CSV)
     private void trainModel(String outputFilePath) {
         RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
         try {
-            recommendationEngine.trainModel(recEngineInputs, outputFilePath);
+            recommendationEngine.trainModel(sortedListOfUserSubmissions, outputFilePath);
         } catch (EngineException e) {
             System.out.println("Error during training of the RecommendationEngine!");
             System.out.println(e.getEngineMessage());

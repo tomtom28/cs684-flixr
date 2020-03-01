@@ -1,12 +1,10 @@
 package com.flixr.engine;
 
-import com.flixr.engine.io.RecEngineInput;
 import com.flixr.engine.exceptions.EngineException;
+import com.flixr.engine.io.UserSubmission;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * @author Thomas Thompson
@@ -33,8 +31,7 @@ public class RecommendationEngine {
     private HashMap<Integer, Integer> matrixIndexToMovieId; // Index -> MovieId
 
     // Maps all UserIds to all movies they rated: UserID -> (MovieId, Rating)
-    private HashMap<Integer, HashMap<Integer, Double>> userSubmissions;
-
+    private Map<Integer, UserSubmission> userSubmissions;
 
     /**
      * Creates a RecommendationEngine instance
@@ -62,12 +59,12 @@ public class RecommendationEngine {
      * Runs an implementation of the SlopeOne algorithm to determine the rating correlation between movies
      * Outputs are stored in a Database using the EngineDAO
      *
-     * @param recEngineInputs  List of Recommendation Engine Input Objects (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
+     * @param userSubmissions  List of User Submissions (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
      */
-    public void trainModel(List<RecEngineInput> recEngineInputs) throws EngineException {
+    public void trainModel(Map<Integer, UserSubmission> userSubmissions) throws EngineException {
 
-        // Match UserIds to (MovieId, Rating) submissions
-        setUserSubmissions(recEngineInputs);
+        // Store list of UserSubmissions
+        this.userSubmissions = userSubmissions;
 
         // Generate Correlations Between (MovieId to MovieId) and (Rating)
         generateCorrelationMatrix();
@@ -82,12 +79,12 @@ public class RecommendationEngine {
      * Runs an implementation of the SlopeOne algorithm to determine the rating correlation between movies
      * Outputs are stored in a CSV file at the file patch specified
      *
-     * @param recEngineInputs  List of RecEngineInput Objects (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
+     * @param userSubmissions  List of RecEngineInput Objects (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
      */
-    public void trainModel(List<RecEngineInput> recEngineInputs, String fullOutputFilePath) throws EngineException {
+    public void trainModel(Map<Integer, UserSubmission> userSubmissions, String fullOutputFilePath) throws EngineException {
 
-        // Match UserIds to (MovieId, Rating) submissions
-        setUserSubmissions(recEngineInputs);
+        // Store list of UserSubmissions
+        this.userSubmissions = userSubmissions;
 
         // Generate Correlations Between (MovieId to MovieId) and (Rating)
         generateCorrelationMatrix();
@@ -138,36 +135,6 @@ public class RecommendationEngine {
     }
 
 
-    // Maps all UserIds to submitted (Movie, Rating) pairs
-    // NOTE: recEngineInputs must be sorted by UserId
-    private void setUserSubmissions(List<RecEngineInput> recEngineInputs) throws EngineException {
-        userSubmissions = new HashMap<>();
-
-        // Iterate over EngineInputs and map UserId to (Movie, Rating)
-        int userId = -1;
-        HashMap<Integer, Double> currentUserSubmission = null; // stores current HashMap reference (for speed)
-        for (RecEngineInput recEngineInput : recEngineInputs) {
-
-            // Given a new UserId, create a new submission entry
-            if (userId != recEngineInput.getUserId()) {
-                userId = recEngineInput.getUserId();
-                userSubmissions.put(userId, new HashMap<>());
-                currentUserSubmission = userSubmissions.get(userId);
-            }
-
-            // Append to the current submission entry
-            try {
-                currentUserSubmission.put(recEngineInput.getMovieId(), recEngineInput.getRating());
-            } catch (NullPointerException e) {
-                EngineException ee = new EngineException(e);
-                ee.setEngineMessage("Unable to find any UserIds with a movie rating!");
-                throw ee;
-            }
-        }
-
-    }
-
-
     // Generates the Correlation Matrix between Movie to Movie Ratings
     // Also tracks movie rating frequency
     private void generateCorrelationMatrix() {
@@ -186,10 +153,10 @@ public class RecommendationEngine {
                     // Iterate over every UserId
                     for (int userId : userSubmissions.keySet()) {
                         // Add to matrices if the user rated both MovieIds
-                        HashMap<Integer, Double> userSubmission = userSubmissions.get(userId);
-                        if (userSubmission.keySet().contains(movieId_i) && userSubmission.keySet().contains(movieId_j)) {
+                        UserSubmission userSubmission = userSubmissions.get(userId);
+                        if (userSubmission.getMoviesViewed().contains(movieId_i) && userSubmission.getMoviesViewed().contains(movieId_j)) {
                             // Add Rating Difference to a running Sum of Differences
-                            matrixOfMovieToMovieRatingDifferenceSums[i][j] +=  userSubmission.get(movieId_i) - userSubmission.get(movieId_j);
+                            matrixOfMovieToMovieRatingDifferenceSums[i][j] +=  userSubmission.getMovieRating(movieId_i) - userSubmission.getMovieRating(movieId_j);
                             // Increment Rating Count
                             matrixOfMovieToMovieRatingFrequency[i][j] += 1;
                         }
@@ -202,6 +169,5 @@ public class RecommendationEngine {
         }
 
     }
-
 
 }
