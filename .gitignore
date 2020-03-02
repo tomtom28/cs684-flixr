@@ -1,6 +1,8 @@
 # Mac
 .DS_Store
 
+# Test output files (too big)
+/test_data/outputs
 
 
 # Compiled class file
