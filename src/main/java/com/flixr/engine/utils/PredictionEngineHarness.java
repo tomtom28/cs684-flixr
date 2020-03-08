@@ -1,10 +1,10 @@
 package com.flixr.engine.utils;
 
 import com.flixr.engine.PredictionEngine;
-import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.IPredictionEngineDAO;
-import com.flixr.engine.io.Prediction;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.exceptions.EngineException;
+import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.beans.Prediction;
+import com.flixr.beans.UserSubmission;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -210,7 +210,7 @@ public class PredictionEngineHarness implements IPredictionEngineDAO {
         int userId = 2;
 
         // Select Training File Name
-        String ratingFileName = "ml-extra-small-ratings";
+        String ratingFileName = "ml-small-ratings";
 
         // Selects a Input/Output CSV Files
         String path = System.getProperty("user.dir");

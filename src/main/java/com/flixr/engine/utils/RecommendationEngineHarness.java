@@ -1,8 +1,8 @@
 package com.flixr.engine.utils;
 
 import com.flixr.engine.RecommendationEngine;
-import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.exceptions.EngineException;
+import com.flixr.beans.UserSubmission;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -85,14 +85,26 @@ public class RecommendationEngineHarness {
             System.out.println("Error during training of the RecommendationEngine!");
             System.out.println(e.getEngineMessage());
         }
+    }
 
+
+    // Trains the model (and saves to DB)
+    private void trainModel() {
+        RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
+        try {
+            recommendationEngine.trainModel(sortedListOfUserSubmissions);
+        } catch (EngineException e) {
+            System.out.println("Error during training of the RecommendationEngine!");
+            System.out.println(e.getEngineMessage());
+        }
     }
 
     // Creates an RecommendationEngineHarness for Standalone model training
     public static void main(String[] args) {
 
-        // Select Training File Name
+        // Select Training File Name & CSV or DB Test
         String ratingFileName = "ml-extra-small-ratings";
+        boolean saveToDB = true;
 
         // Selects a Input/Output CSV Files
         String pathName = System.getProperty("user.dir");
@@ -103,9 +115,16 @@ public class RecommendationEngineHarness {
         RecommendationEngineHarness recommendationEngineHarness = new RecommendationEngineHarness();
         recommendationEngineHarness.readInputFile(pathName + inputFile);
 
-        // Trains the Recommendation Engine (and saves to CSV)
+        // Run a training test
         long startTime = System.currentTimeMillis();
-        recommendationEngineHarness.trainModel(pathName + outputFile);
+        // Database vs CSV test
+        if (saveToDB) {
+            // Trains the Recommendation Engine (and saves to DB)
+            recommendationEngineHarness.trainModel();
+        } else {
+            // Trains the Recommendation Engine (and saves to CSV)
+            recommendationEngineHarness.trainModel(pathName + outputFile);
+        }
         long endTime = System.currentTimeMillis();
         System.out.println("\nTotal Run Time: " + (endTime - startTime) + " ms.");
 

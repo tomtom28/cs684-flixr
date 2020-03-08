@@ -1,5 +1,138 @@
 package com.flixr.dao;
 
-public class EngineDAO {
-    // todo
+import com.flixr.beans.UserSubmission;
+import com.flixr.exceptions.DAOException;
+import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.interfaces.IRecommendationEngineDAO;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static com.flixr.configuration.ApplicationConstants.*;
+
+/**
+ * @author Thomas Thompson
+ *
+ * Used to query the database to create Recommendation Engine user submission inputs & save the trained model to the database
+ * Also used to by the Prediction Engine to create user submission inputs & query the trained model
+ *
+ */
+public class EngineDAO implements IPredictionEngineDAO, IRecommendationEngineDAO {
+
+    public EngineDAO() {}
+
+
+    // TODO TOM FINISH THIS ONCE MY MODEL IS UPLOADED TO DB
+    /**
+     * Gets the Correlation between Movies in the trained Recommendation Model
+     * @param movieId_i     MovieId in Matrix position i
+     * @param movieId_j     MovieId in Matrix position j
+     * @return  Correlation (i.e. average preference difference between Movie i and Movie j)
+     */
+    public double getAveragePreferenceDifference(int movieId_i, int movieId_j) {
+        return 1.0;
+    }
+
+
+    /**
+     * @param userId    User Id
+     * @return Returns all movieIds that were NOT rated by a given UserId
+     * @throws SQLException
+     */
+    public Collection<Integer> getMovieIdsNotRatedByUserId(int userId) throws DAOException {
+
+        // Query DB for all MovieIds not rated by given user
+        try {
+            String query = "SELECT DISTINCT imdbId " +
+                    "FROM ratings " +
+                    "WHERE imdbId NOT IN ( " +
+                    "SELECT imdbId FROM ratings WHERE userId = ? " +
+                    ")";
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, userId);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Iterate over ResultSet to create list of MovieIds
+            Collection<Integer> movieIdsNotRatedByUserId = new ArrayList<>();
+            while (resultSet.next()) {
+                int movieId = resultSet.getInt("imdbId");
+                movieIdsNotRatedByUserId.add(movieId);
+            }
+
+            // Close connection and return
+            conn.close();
+            return movieIdsNotRatedByUserId;
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+
+    /**
+     * @param   userId  User Id
+     * @return  UserSubmission for a given User Id with all the Movies the user Rated
+     * @throws  SQLException
+     */
+    public UserSubmission getUserSubmission(int userId) throws DAOException {
+
+        // Query DB for all Ratings for given user
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT imdbId, rating FROM ratings WHERE userId = ?");
+            stmt.setInt(1, userId);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Iterate over ResultSet to create UserSubmission for a given UserId
+            UserSubmission userSubmission = new UserSubmission(userId);
+            while (resultSet.next()) {
+                int movieId = resultSet.getInt("imdbId");
+                double rating = resultSet.getDouble("rating");
+                userSubmission.addMovieRating(movieId, rating);
+            }
+
+            // Close connection and return
+            conn.close();
+            return userSubmission;
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+
+
+    public void saveMatrixRowToDB(List<Number[]> matrixRow) throws DAOException {
+
+        // Generate Query for current Matrix Row
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO RecEngineModel VALUES (?,?,?)");
+
+            // Iterate over all indexes in matrix row
+            for (Number[] matrixIndex : matrixRow) {
+                int movieId_i = (int) matrixIndex[0];
+                int movieId_j = (int) matrixIndex[1];
+                double avgDifference = (double) matrixIndex[2];
+                stmt.setInt(1, movieId_i);
+                stmt.setInt(2, movieId_j);
+                stmt.setDouble(3, avgDifference);
+                stmt.addBatch();
+            }
+
+            // Insert all matrix row entries in 1 batch
+            stmt.executeBatch();
+
+            // Close connection
+            conn.close();
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+
+    }
+
 }
