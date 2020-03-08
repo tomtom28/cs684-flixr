@@ -1,9 +1,13 @@
 package com.flixr.engine;
 
-import com.flixr.engine.exceptions.EngineException;
+import com.flixr.dao.EngineDAO;
+import com.flixr.exceptions.DAOException;
+import com.flixr.exceptions.EngineException;
 import com.flixr.beans.UserSubmission;
+import com.flixr.interfaces.IRecommendationEngineDAO;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -70,7 +74,7 @@ public class RecommendationEngine {
         generateCorrelationMatrix();
 
         // Save Correlation Matrix to Database
-        // TODO implement Database Method
+        saveModelToDB();
 
     }
 
@@ -131,6 +135,47 @@ public class RecommendationEngine {
         } finally {
             // Closes CSV output writer
             if (writer != null) writer.close();
+        }
+    }
+
+
+    // Saves the correlation matrix to a CSV files
+    // This is used in StandAlone Mode
+    private void saveModelToDB() throws EngineException {
+
+        // Compute Average Rating Differences and Save to Database
+        try {
+
+            // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
+            for (int i = 0; i < movieCount; i++) {
+
+                // Collect results of current matrix row
+                List<Number[]> matrixRow = new ArrayList<>();
+
+                for (int j = 0; j < movieCount; j++) {
+
+                    // Only average movies that were rated
+                    if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
+                        matrixOfMovieToMovieCorrelation[i][j] = matrixOfMovieToMovieRatingDifferenceSums[i][j] / matrixOfMovieToMovieRatingFrequency[i][j];
+                    }
+
+                    // Add current matrix index entry for this row
+                    matrixRow.add(new Number[] {matrixIndexToMovieId.get(i), matrixIndexToMovieId.get(j), matrixOfMovieToMovieCorrelation[i][j]});
+
+                }
+
+                // Save Current Matrix Row to Database
+                EngineDAO engineDAO = new EngineDAO();
+                engineDAO.saveMatrixRowToDB(matrixRow);
+
+                // Print progress
+                System.out.println("Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
+            }
+
+        } catch (DAOException e) {
+            EngineException ee = new EngineException(e);
+            ee.setEngineMessage("Unable to Save Trained Model.");
+            throw ee;
         }
     }
 

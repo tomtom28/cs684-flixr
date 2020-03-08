@@ -1,4 +1,4 @@
-package com.flixr.engine.exceptions;
+package com.flixr.exceptions;
 
 /**
  * @author Thomas Thompson
