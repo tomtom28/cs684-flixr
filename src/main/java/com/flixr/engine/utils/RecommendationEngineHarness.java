@@ -92,7 +92,7 @@ public class RecommendationEngineHarness {
     public static void main(String[] args) {
 
         // Select Training File Name
-        String ratingFileName = "ml-small-ratings";
+        String ratingFileName = "ml-extra-small-ratings";
 
         // Selects a Input/Output CSV Files
         String pathName = System.getProperty("user.dir");

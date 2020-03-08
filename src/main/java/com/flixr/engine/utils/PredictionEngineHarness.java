@@ -210,7 +210,7 @@ public class PredictionEngineHarness implements IPredictionEngineDAO {
         int userId = 2;
 
         // Select Training File Name
-        String ratingFileName = "ml-small-ratings";
+        String ratingFileName = "ml-extra-small-ratings";
 
         // Selects a Input/Output CSV Files
         String path = System.getProperty("user.dir");
