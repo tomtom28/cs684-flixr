@@ -18,7 +18,7 @@ import java.util.TreeSet;
 /**
  * @author Thomas Thompson
  *
- * Used to launch a Stand Alone version of the PredictionEngineInput Engine
+ * Used to launch a Stand Alone version of the Prediction Engine
  * Purpose is for backend testing / development
  *
  */

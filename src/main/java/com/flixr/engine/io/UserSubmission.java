@@ -7,7 +7,7 @@ import java.util.List;
  * @author Thomas Thompson
  *
  * Used to store User Submissions, i.e. all movies that a given user has rated
- * The submissions is identifiec by the UserId and subsequent tuples for each (MovieId, Rating) they submitted
+ * The submissions is identified by the UserId and subsequent tuples for each (MovieId, Rating) they submitted
  * Passed as an input to the RecommendationEngine and PredictionEngine
  *
  */
