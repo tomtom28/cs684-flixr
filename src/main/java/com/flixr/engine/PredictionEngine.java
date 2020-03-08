@@ -1,8 +1,8 @@
 package com.flixr.engine;
 
-import com.flixr.engine.io.IPredictionEngineDAO;
-import com.flixr.engine.io.Prediction;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.beans.Prediction;
+import com.flixr.beans.UserSubmission;
 
 
 import java.util.*;

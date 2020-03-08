@@ -2,9 +2,9 @@ package com.flixr.engine.utils;
 
 import com.flixr.engine.PredictionEngine;
 import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.IPredictionEngineDAO;
-import com.flixr.engine.io.Prediction;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.beans.Prediction;
+import com.flixr.beans.UserSubmission;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

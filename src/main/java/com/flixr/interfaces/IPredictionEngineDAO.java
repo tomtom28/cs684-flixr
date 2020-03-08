@@ -1,4 +1,4 @@
-package com.flixr.engine.io;
+package com.flixr.interfaces;
 
 /**
  * @author Thomas Thompson

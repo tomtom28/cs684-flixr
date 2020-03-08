@@ -1,7 +1,7 @@
 package com.flixr.engine;
 
 import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.beans.UserSubmission;
 
 import java.io.*;
 import java.util.*;

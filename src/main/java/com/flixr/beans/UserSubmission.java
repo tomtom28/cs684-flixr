@@ -1,4 +1,4 @@
-package com.flixr.engine.io;
+package com.flixr.beans;
 
 import java.util.ArrayList;
 import java.util.List;

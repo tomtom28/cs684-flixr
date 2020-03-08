@@ -2,7 +2,7 @@ package com.flixr.engine.utils;
 
 import com.flixr.engine.RecommendationEngine;
 import com.flixr.engine.exceptions.EngineException;
-import com.flixr.engine.io.UserSubmission;
+import com.flixr.beans.UserSubmission;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
