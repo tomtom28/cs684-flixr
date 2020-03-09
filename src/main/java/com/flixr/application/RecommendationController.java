@@ -4,8 +4,11 @@ package com.flixr.application;
 import com.flixr.beans.PredictedMovie;
 import com.flixr.beans.UserSubmission;
 import com.flixr.dao.EngineDAO;
+import com.flixr.dao.PredictionDAO;
 import com.flixr.engine.PredictionEngine;
 import com.flixr.beans.Prediction;
+import com.flixr.exceptions.DAOException;
+import com.flixr.exceptions.EngineException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,10 +24,7 @@ import java.util.List;
  */
 public class RecommendationController {
 
-    private EngineDAO engineDAO;
-
     public RecommendationController() {
-        engineDAO = new EngineDAO();
     }
 
     /**
@@ -35,16 +35,18 @@ public class RecommendationController {
      * @throws SQLException                 Thrown if DB Connection issue
      * @throws IndexOutOfBoundsException    Thrown if top "X" is greater than the number of predicted movies available
      */
-    public List<PredictedMovie> getTopMoviePredictions(int userId, int numberOfMoviePredictions) throws SQLException, IndexOutOfBoundsException {
+    public List<PredictedMovie> getTopMoviePredictions(int userId, int numberOfMoviePredictions) throws EngineException, DAOException, IndexOutOfBoundsException {
 
         // Get UserSubmission
+        EngineDAO engineDAO = new EngineDAO();
         UserSubmission userSubmission = engineDAO.getUserSubmission(userId);
 
         // Get MovieIds not rated by user
         Collection<Integer> movieIdsNotRatedByUser = engineDAO.getMovieIdsNotRatedByUserId(userId);
 
         // Generate Prediction from Engine
-        PredictionEngine predictionEngine = new PredictionEngine(userSubmission, movieIdsNotRatedByUser, engineDAO);
+        PredictionDAO predictionDAO = new PredictionDAO();
+        PredictionEngine predictionEngine = new PredictionEngine(userSubmission, movieIdsNotRatedByUser, predictionDAO);
         predictionEngine.generatePredictions();
 
         // Get Top "X" movie predictions

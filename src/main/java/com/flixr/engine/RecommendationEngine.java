@@ -4,10 +4,8 @@ import com.flixr.dao.EngineDAO;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 import com.flixr.beans.UserSubmission;
-import com.flixr.interfaces.IRecommendationEngineDAO;
 
 import java.io.*;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -26,7 +24,7 @@ import java.util.*;
 public class RecommendationEngine {
 
     // Represents a 2D matrix
-    private double[][] matrixOfMovieToMovieCorrelation; // Trained Model: (MovieId, MovieId) -> Rating Factor of IPrediction
+    private double[][] matrixOfMovieToMovieCorrelation; // Trained Model: (MovieId, MovieId) -> Rating Factor of Prediction
     private double[][] matrixOfMovieToMovieRatingDifferenceSums; // (MovieId, MovieId) -> Sum of all Movie to Movie Rating Differences among Users
     private int[][] matrixOfMovieToMovieRatingFrequency; // (MovieId, MovieId) -> Number of Users who Rated Both Movies in their submission
     private int movieCount; // size of NxN matrix

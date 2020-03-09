@@ -3,7 +3,6 @@ package com.flixr.dao;
 import com.flixr.beans.UserSubmission;
 import com.flixr.exceptions.DAOException;
 import com.flixr.interfaces.IPredictionEngineDAO;
-import com.flixr.interfaces.IRecommendationEngineDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,22 +18,9 @@ import static com.flixr.configuration.ApplicationConstants.*;
  * Also used to by the Prediction Engine to create user submission inputs & query the trained model
  *
  */
-public class EngineDAO implements IPredictionEngineDAO, IRecommendationEngineDAO {
+public class EngineDAO {
 
     public EngineDAO() {}
-
-
-    // TODO TOM FINISH THIS ONCE MY MODEL IS UPLOADED TO DB
-    /**
-     * Gets the Correlation between Movies in the trained Recommendation Model
-     * @param movieId_i     MovieId in Matrix position i
-     * @param movieId_j     MovieId in Matrix position j
-     * @return  Correlation (i.e. average preference difference between Movie i and Movie j)
-     */
-    public double getAveragePreferenceDifference(int movieId_i, int movieId_j) {
-        return 1.0;
-    }
-
 
     /**
      * @param userId    User Id
@@ -102,8 +88,6 @@ public class EngineDAO implements IPredictionEngineDAO, IRecommendationEngineDAO
             throw new DAOException(e);
         }
     }
-
-
 
     public void saveMatrixRowToDB(List<Number[]> matrixRow) throws DAOException {
 

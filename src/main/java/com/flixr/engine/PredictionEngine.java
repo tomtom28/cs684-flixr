@@ -1,5 +1,7 @@
 package com.flixr.engine;
 
+import com.flixr.exceptions.DAOException;
+import com.flixr.exceptions.EngineException;
 import com.flixr.interfaces.IPredictionEngineDAO;
 import com.flixr.beans.Prediction;
 import com.flixr.beans.UserSubmission;
@@ -42,7 +44,7 @@ public class PredictionEngine {
     }
 
 
-    public void generatePredictions() {
+    public void generatePredictions() throws EngineException {
 
         // For every item i the user u expresses no preference for:
         for (int movieIdNotRated : movieIdsNotRatedByUser) {

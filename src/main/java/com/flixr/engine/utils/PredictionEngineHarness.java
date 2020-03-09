@@ -24,7 +24,7 @@ import java.util.TreeSet;
  */
 public class PredictionEngineHarness implements IPredictionEngineDAO {
 
-    PredictionEngine predictionEngine;
+    private PredictionEngine predictionEngine;
     private String ratingInputFilePath;
     private String modelInputFilePath;
 
@@ -154,7 +154,7 @@ public class PredictionEngineHarness implements IPredictionEngineDAO {
     }
 
 
-    private void generatePrediction() {
+    private void generatePrediction() throws EngineException {
         predictionEngine = new PredictionEngine(userSubmission, movieIdsNotViewedByUserId, this);
         predictionEngine.generatePredictions();
     }
