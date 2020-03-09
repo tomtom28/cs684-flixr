@@ -1,5 +1,9 @@
 package com.flixr.configuration;
 
+/**
+ * @author Green Team
+ * Add any application constants here
+ */
 public class ApplicationConstants {
 
     // Database Credentials

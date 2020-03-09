@@ -1,5 +1,7 @@
 package com.flixr.interfaces;
 
+import com.flixr.exceptions.EngineException;
+
 /**
  * @author Thomas Thompson
  *
@@ -8,6 +10,6 @@ package com.flixr.interfaces;
  */
 public interface IPredictionEngineDAO {
 
-    public double getAveragePreferenceDifference(int movieId_i, int movieId_j);
+    public double getAveragePreferenceDifference(int movieId_i, int movieId_j) throws EngineException;
 
 }
