@@ -1,0 +1,83 @@
+
+
+.topspace{
+   margin-top:80px;
+ }
+
+#content{
+  width: 100%;
+  padding: 40px;
+  min-height: 100vh;
+  transition: all 0.1s;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+
+#sidebar {
+    min-width: 200px;
+    max-width: 200px;
+    color: #fff;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.rating{
+  position: absolute;
+  top:75%;
+  left: 58%;
+  transform:translate(-50%,-50%) rotateY(180deg);
+  display: flex;
+}
+
+.buttonp{
+  position: absolute;
+  top:84%;
+  left: 61%;
+  transform:translate(-50%,-50%) ;
+  display: flex;
+}
+
+.rating input{
+  display: none;
+}
+
+.rating label{
+  display:block;
+  cursor: pointer;
+  width: 50px;
+}
+
+.rating label:before{
+  content: '\f005';
+  font-family: fontAwesome;
+  position: absolute;
+  display: block;
+  font-size: 35px;
+  color: #101010;
+}
+
+.rating label:after{
+  content: '\f005';
+  font-family: fontAwesome;
+  position: absolute;
+  display: block;
+  font-size: 35px;
+  color: #fee12b;
+  top: 0;
+  opacity:0;
+  transition: .2s;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rating label:hover:after,
+.rating label:hover~ label:after,
+.rating input:checked ~ label:after{
+  opacity: 1;
+}
