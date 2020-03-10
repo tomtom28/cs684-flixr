@@ -1,7 +1,7 @@
 package com.flixr.application;
 
 
-import com.flixr.beans.PredictedMovie;
+import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.UserSubmission;
 import com.flixr.dao.EngineDAO;
 import com.flixr.dao.PredictionDAO;
@@ -35,7 +35,7 @@ public class RecommendationController {
      * @throws SQLException                 Thrown if DB Connection issue
      * @throws IndexOutOfBoundsException    Thrown if top "X" is greater than the number of predicted movies available
      */
-    public List<PredictedMovie> getTopMoviePredictions(int userId, int numberOfMoviePredictions) throws EngineException, DAOException, IndexOutOfBoundsException {
+    public List<MovieWithPrediction> getTopMoviePredictions(int userId, int numberOfMoviePredictions) throws EngineException, DAOException, IndexOutOfBoundsException {
 
         // Get UserSubmission
         EngineDAO engineDAO = new EngineDAO();
@@ -54,9 +54,9 @@ public class RecommendationController {
 
         // TODO finish this part once Movie beans in are place
         // Iterate over predictions to create MoviePredictions
-        List<PredictedMovie> predictedMovies = new ArrayList<>();
+        List<MovieWithPrediction> predictedMovies = new ArrayList<>();
         for (Prediction prediction : predictions) {
-            PredictedMovie predictedMovie = new PredictedMovie();
+            MovieWithPrediction predictedMovie = new MovieWithPrediction();
             predictedMovies.add(predictedMovie);
         }
 
