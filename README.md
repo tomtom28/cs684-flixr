@@ -21,8 +21,9 @@ Zion Whitehall
 
 
 
-### Cloning Down the Repo
+### Setting up the Project
 
+#### API Service & Recommendation Engine Setup
 Use any Java IDE, we suggest using IntelliJ:
 
   - Download [IntelliJ](https://www.jetbrains.com/idea/) Community Edition
@@ -36,23 +37,34 @@ Use any Java IDE, we suggest using IntelliJ:
   - Please note that the `com.flixr.configuration.ApplicationConstants` class will need to have its MySQL credentials updated to match your environment.
 
 
+#### Frontend Setup
 Within the command line, perform the following actions:
 
-  - Navigate to the root folder `cs684-flixr`
+  - Navigate to the frontend project folder `cs684-flixr/frontend`
 
   - Run `npm install` to download your dependencies
 
-  - Run `webpack` to compile the ReactJS front-end
 
+### Running the Application
+You will need to run both webservices to use the web application.
 
-Now, going back to your IDE:
+#### Run the Java API:
+Within your IDE:
 
   - Navigate to `com.flixr.Application` and click the `public static void main()` method.
 
   - Click the green play button in IntelliJ to run the project.
+  
+  - The API will be running GET and POST requests on [localhost:8080](http://localhost:8080/)
 
-  - Finally, open up to [localhost:8080](http://localhost:8080/) in your browser to see the webapp in action.
 
+#### Run the NodeJS Frontend:
+
+Within your commmand line:
+
+  - Navigate to the frontend project folder `cs684-flixr/frontend`
+  
+  - Open up to [localhost:3000](http://localhost:3000/) in your browser to see the webapp in action.
 
 
 ### References
