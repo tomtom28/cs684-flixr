@@ -26,11 +26,11 @@ Zion Whitehall
 #### API Service & Recommendation Engine Setup
 Use any Java IDE, we suggest using IntelliJ:
 
+  - Download Java JDK 8. You can use this [website](https://java.com/en/download/)
+  
   - Download [IntelliJ](https://www.jetbrains.com/idea/) Community Edition
 
-  - Using the Import option, select the pom.xml file.
-
-  - IntelliJ will automatically build the dependencies using Maven (built into IntelliJ).
+  - IntelliJ should automatically build the dependencies using Maven and the pom.xml file.
 
   - Then, open [MySQL workbench](https://www.mysql.com/products/workbench/) and run the queries included in the `database` folder.
 
@@ -38,6 +38,9 @@ Use any Java IDE, we suggest using IntelliJ:
 
 
 #### Frontend Setup
+Ensure you have NodeJS installed:
+  - Download [NodeJS](https://nodejs.org/en/) if needed.
+  
 Within the command line, perform the following actions:
 
   - Navigate to the frontend project folder `cs684-flixr/frontend`
