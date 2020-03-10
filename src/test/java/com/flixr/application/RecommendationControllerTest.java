@@ -1,6 +1,6 @@
 package com.flixr.application;
 
-import com.flixr.beans.PredictedMovie;
+import com.flixr.beans.MovieWithPrediction;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 
@@ -27,7 +27,7 @@ class RecommendationControllerTest {
             try {
                 // Get top 10 movie predictions
                 RecommendationController recommendationController = new RecommendationController();
-                List<PredictedMovie> predictedMovies = recommendationController.getTopMoviePredictions(userId, numMovies);
+                List<MovieWithPrediction> predictedMovies = recommendationController.getTopMoviePredictions(userId, numMovies);
 
                 // Check that Movie counts match
                 assertEquals(numMovies, predictedMovies.size(), "Number of movies must match the count");
