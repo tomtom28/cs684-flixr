@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class AddMovieServlet
  */
 @WebServlet("/AddMovieServlet")
-public class NewMovieServlet extends HttpServlet {
+public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -35,7 +35,7 @@ public class NewMovieServlet extends HttpServlet {
         String uid = request.getParameter("userid");
         System.out.println(uid);
         request.setAttribute("uid", uid);
-        getServletConfig().getServletContext().getRequestDispatcher("/addmovie.jsp").forward(request,response);
+        //getServletConfig().getServletContext().getRequestDispatcher("/addmovie.jsp").forward(request,response);
 
     }
 
