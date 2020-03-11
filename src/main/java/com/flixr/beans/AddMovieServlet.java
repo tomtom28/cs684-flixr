@@ -1,3 +1,4 @@
+/*
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class AddMovieServlet
  */
+/*
 @WebServlet("/AddMovieServlet")
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -15,6 +17,7 @@ public class AddMovieServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
+/*
     public AddMovieServlet() {
         super();
         // TODO Auto-generated constructor stub
@@ -23,6 +26,7 @@ public class AddMovieServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+/*
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
     }
@@ -30,6 +34,7 @@ public class AddMovieServlet extends HttpServlet {
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
+/*
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         String uid = request.getParameter("userid");
@@ -38,5 +43,6 @@ public class AddMovieServlet extends HttpServlet {
         //getServletConfig().getServletContext().getRequestDispatcher("/addmovie.jsp").forward(request,response);
 
     }
-
 }
+
+**/

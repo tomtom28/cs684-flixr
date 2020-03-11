@@ -1,3 +1,4 @@
+/*
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ public class LoginServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
+/*
     public LoginServlet() {
         super();
         // TODO Auto-generated constructor stub
@@ -22,6 +24,8 @@ public class LoginServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+
+    /*
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
 
@@ -30,6 +34,7 @@ public class LoginServlet extends HttpServlet {
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
+    /*
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         String uid = request.getParameter("uid");
@@ -42,5 +47,7 @@ public class LoginServlet extends HttpServlet {
         //response.sendRedirect("page2.jsp");
         getServletConfig().getServletContext().getRequestDispatcher("/page2.jsp").forward(request,response);
     }
-
+    */
+    /*
 }
+*/
