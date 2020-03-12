@@ -6,7 +6,7 @@ package com.flixr.beans;
  * Adds a Predicted Rating variable to the Movie bean
  *
  */
-public class PredictedMovie extends Movie {
+public class PredictedMovie {
 
     // TODO
 
