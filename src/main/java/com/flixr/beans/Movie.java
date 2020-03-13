@@ -9,6 +9,7 @@ public class Movie {
     private int runtime;
     private String director;
     private String writer;
+    private String moviePosterURL;
 
     public int getMovieID(){
         return this.movieID;
@@ -57,5 +58,14 @@ public class Movie {
     }
     public void setWriter(String writer) {
         this.writer = writer;
+    }
+    public String getMoviePosterURL() {
+        return moviePosterURL;
+    }
+    public void setDirector(String director) {
+        this.director = director;
+    }
+    public void setMoviePosterURL(String moviePosterURL) {
+        this.moviePosterURL = moviePosterURL;
     }
 }
