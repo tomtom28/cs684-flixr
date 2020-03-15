@@ -11,7 +11,7 @@ For more details please refer to the project's [design document](https://docs.go
 
 ### Authors
 
-Fangzhou Gou
+Fangzhou Guo
 
 Thomas Thompson
 
