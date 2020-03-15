@@ -17,7 +17,7 @@ public class OmdbResponse {
     private String movieTitle;
 
     @JsonProperty("Year")
-    private int year;
+    private String year;
 
     @JsonProperty("Rated")
     private String ageRating;
@@ -87,8 +87,17 @@ public class OmdbResponse {
         return movieTitle;
     }
 
+    /**
+     * Some movies had a strange "-" in the year field from the API
+     * This will convert the String to an int year (and remove the "-") if needed
+     * @return  Year as an Integer (4 digits)
+     */
     public int getYear() {
-        return year;
+        int lengthOfYear = year.length();
+        if (lengthOfYear > 4) {
+            year = year.substring(0,5);
+        }
+        return Integer.parseInt(year);
     }
 
     public String getAgeRating() {
