@@ -50,7 +50,7 @@ public class Movie {
     public String getDirector(){
         return this.director = director;
     }
-    public void setDirector(){
+    public void setDirector(String director){
         this.director = director;
     }
     public String getWriter(){
