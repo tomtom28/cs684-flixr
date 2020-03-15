@@ -1,5 +1,8 @@
 package com.flixr.dao;
 
+import com.flixr.beans.Movie;
+import com.flixr.beans.MovieWithPrediction;
+import com.flixr.beans.Prediction;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 import com.flixr.interfaces.IPredictionEngineDAO;
@@ -25,8 +28,6 @@ public class PredictionDAO implements IPredictionEngineDAO {
         setDistinctMovieIds();
         generateMatrixModel();
     }
-
-
 
     /**
      * Gets the Correlation between Movies in the trained Recommendation Model
@@ -71,26 +72,42 @@ public class PredictionDAO implements IPredictionEngineDAO {
         try {
             System.out.println("Querying Database... ");
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM recenginemodel");
-            ResultSet resultSet = stmt.executeQuery();
-            System.out.println("Query Complete. Building Matrix... ");
+//            Statement stmt = conn.createStatement();
 
-            // Iterate Over all DB Entries
-            while (resultSet.next()) {
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM recenginemodel WHERE movieIdi = ?");
 
-                // Assumes format: (MovieId_i,MovieId_j,Rating)
-                int movieIdMatrix_i = resultSet.getInt("MovieIdi");
-                int movieIdMatrix_j = resultSet.getInt("MovieIdj");
-                double avgRatingDifference = resultSet.getDouble("AvgDifference");;
+            // TODO : Try to improve performance by using threads
 
-                // Convert MovieId to Matrix Index
-                int i = movieIdToMatrixIndex.get(movieIdMatrix_i);
-                int j = movieIdToMatrixIndex.get(movieIdMatrix_j);
+            // Counter for logging
+            int count = 0;
 
-                // Add to internal matrix
-                correlationMatrix[i][j] = avgRatingDifference;
+            // Iterate over all stored Rows in Matrix
+            for (int movieIdi : distinctMovieIds) {
 
+                stmt.setInt(1, movieIdi);
+                ResultSet resultSet = stmt.executeQuery();
+
+                // Iterate Over all DB Entries
+                while (resultSet.next()) {
+
+                    // Assumes format: (MovieId_i,MovieId_j,Rating)
+                    int movieIdMatrix_i = resultSet.getInt("MovieIdi");
+                    int movieIdMatrix_j = resultSet.getInt("MovieIdj");
+                    double avgRatingDifference = resultSet.getDouble("AvgDifference");;
+
+                    // Convert MovieId to Matrix Index
+                    int i = movieIdToMatrixIndex.get(movieIdMatrix_i);
+                    int j = movieIdToMatrixIndex.get(movieIdMatrix_j);
+
+                    // Add to internal matrix
+                    correlationMatrix[i][j] = avgRatingDifference;
+                }
+                count++;
+                System.out.println("Completed Matrix Row: " + count + " of " + distinctMovieIds.size());
             }
+
+            // Completed Loading Matrix, close connection
+            System.out.println("Query Complete. Building Matrix... ");
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,6 +139,10 @@ public class PredictionDAO implements IPredictionEngineDAO {
 
     }
 
+    /**
+     * Determines the total # of Movies in the Matrix
+     * @throws DAOException
+     */
     private void setTotalCountOfMoviesInMatrix() throws DAOException {
         try {
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
@@ -136,6 +157,55 @@ public class PredictionDAO implements IPredictionEngineDAO {
             throw new DAOException(e);
         }
     }
+
+    /**
+     * Create Movies with Predicted Ratings
+     * @param predictions   List of Predictions from the Prediction Engine
+     * @return  List of MoviesWithPredictions, aggregates Movie information with the Predicted Ratings
+     * @throws DAOException
+     */
+    public List<MovieWithPrediction> getPredictedMovies(List<Prediction> predictions) throws DAOException {
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM movies WHERE movieId = ?");
+
+            // Iterate Over Predictions & Use MovieID to query for Movie data
+            List<MovieWithPrediction> moviesWithPredictions = new ArrayList<>();
+            for (Prediction prediction : predictions) {
+                // Get Movie Data
+                stmt.setInt(1, prediction.getMovieId());
+                ResultSet resultSet = stmt.executeQuery();
+                resultSet.next();
+
+                // Create new Movie with Prediction
+                MovieWithPrediction movieWithPrediction = new MovieWithPrediction();
+                movieWithPrediction.setMovieID(resultSet.getInt("movieID"));
+                movieWithPrediction.setMoviename(resultSet.getString("movieName"));
+                movieWithPrediction.setReleasedate(resultSet.getString("releaseDate"));
+                movieWithPrediction.setAgerating(resultSet.getString("ageRating"));
+                movieWithPrediction.setActors(resultSet.getString("actors"));
+                movieWithPrediction.setRuntime(resultSet.getInt("runtime"));
+                movieWithPrediction.setDirector(resultSet.getString("director"));
+                movieWithPrediction.setWriter(resultSet.getString("writer"));
+                movieWithPrediction.setMoviePosterURL(resultSet.getString("moviePosterURL"));
+
+                // Set the Predicted Rating
+                movieWithPrediction.setPredictedRating(prediction.getPredictedRating());
+
+                // Append to List
+                moviesWithPredictions.add(movieWithPrediction);
+            }
+
+            // Close and return
+            conn.close();
+            return moviesWithPredictions;
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+
 
 
 }
