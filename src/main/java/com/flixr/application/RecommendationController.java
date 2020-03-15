@@ -11,7 +11,6 @@ import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,13 +51,8 @@ public class RecommendationController {
         // Get Top "X" movie predictions
         List<Prediction> predictions = predictionEngine.getTopXMoviePredictions(numberOfMoviePredictions);
 
-        // TODO finish this part once Movie beans in are place
         // Iterate over predictions to create MoviePredictions
-        List<MovieWithPrediction> predictedMovies = new ArrayList<>();
-        for (Prediction prediction : predictions) {
-            MovieWithPrediction predictedMovie = new MovieWithPrediction();
-            predictedMovies.add(predictedMovie);
-        }
+        List<MovieWithPrediction> predictedMovies = predictionDAO.getPredictedMovies(predictions);
 
         return predictedMovies;
     }
