@@ -9,13 +9,12 @@ import com.flixr.exceptions.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
 public class MovieDAO {
 
-    public ArrayList <Movie> getAllMovies() //return all movies
+    public ArrayList <Movie> getAllMovies() throws DAOException //return all movies
     {
         //query database and get all movies
         //iterate over results set
@@ -30,7 +29,7 @@ public class MovieDAO {
             ResultSet resultSet = stmt.executeQuery();
 
             // Iterate over ResultSet to create list of MovieIds
-            ArrayList<Movie> AllMovies = new ArrayList<Movie>(); //create new Arraylist to send a list of all movie object
+            ArrayList<Movie> allMovies = new ArrayList<Movie>(); //create new Arraylist to send a list of all movie object
 
 
             //do git pull later for movie stuff in beans
@@ -46,6 +45,7 @@ public class MovieDAO {
             //making my own while loop to get the stuff from the DB
             while (resultSet.next())
             {
+                // Make the Movie Bean
                 Movie movie = new Movie();
                 movie.setMovieID(resultSet.getInt("movieID"));
                 movie.setMoviename(resultSet.getString("movieName"));
@@ -55,11 +55,15 @@ public class MovieDAO {
                 movie.setRuntime(resultSet.getInt("runtime"));
                 movie.setDirector(resultSet.getString("director"));
                 movie.setWriter(resultSet.getString("writer"));
+                movie.setMoviePosterURL(resultSet.getString("posterURL"));
+
+                // Add the Movie Bean to the List
+                allMovies.add(movie);
             }
 
             // Close connection and return
             conn.close();
-            return movieIdsNotRatedByUserId;
+            return allMovies;
 
         } catch (SQLException e) {
             throw new DAOException(e);

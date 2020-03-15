@@ -62,9 +62,6 @@ public class Movie {
     public String getMoviePosterURL() {
         return moviePosterURL;
     }
-    public void setDirector(String director) {
-        this.director = director;
-    }
     public void setMoviePosterURL(String moviePosterURL) {
         this.moviePosterURL = moviePosterURL;
     }
