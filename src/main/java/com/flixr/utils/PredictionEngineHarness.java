@@ -1,4 +1,4 @@
-package com.flixr.engine.utils;
+package com.flixr.utils;
 
 import com.flixr.engine.PredictionEngine;
 import com.flixr.exceptions.EngineException;

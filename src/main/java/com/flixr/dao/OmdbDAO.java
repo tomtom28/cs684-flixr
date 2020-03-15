@@ -52,6 +52,42 @@ public class OmdbDAO {
     }
 
     /**
+     * Alternate version of getting Movie from OMDB API
+     * @param movieId   Movie Id (ex. 114709)
+     * @return  Returns a Movie object, if the REST request was successful to the IMDB API
+     * @throws OmdbException
+     */
+    public Movie getMovieFromOmdbAPI(int movieId) throws OmdbException {
+        String imdbId = this.convertMovieIdToImdbId(movieId);
+        return this.getMovieFromOmdbAPI(imdbId);
+    }
+
+
+    /**
+     * Converts a MovieId to an ImdbId by prepending "0"s and "tt"
+     * @param movieId   Movie Id from database (ex. 417)
+     * @return  ImdbId conversion (ex. tt0000417)
+     */
+    protected String convertMovieIdToImdbId(int movieId) {
+
+        String movieIdStr = Integer.toString(movieId);
+
+        // Numerical Portion must be 7 digits long
+        int movieIdDigitCount = movieIdStr.length();
+        int numberOfExtraZerosNeededInPrefix = 7 - movieIdDigitCount;
+
+        // Prepend # of Needed Zeros
+        for (int i = 0; i < numberOfExtraZerosNeededInPrefix; i++) {
+            movieIdStr = "0" + movieIdStr;
+        }
+
+        // Prepend "tt" to the movieId to create the ImdbId
+        String imdbId = "tt" + movieIdStr;
+
+        return imdbId;
+    }
+
+    /**
      * Convert and IMDB ID into a Movie ID
      * @param imdbId   IMDB ID (ex. tt0114709)
      * @return  Returns a Movie Id (ex. 114709)
@@ -74,6 +110,12 @@ public class OmdbDAO {
      * @throws OmdbException
      */
     private int parseMovieRunTimeFromResponse(String movieRunTime) throws OmdbException {
+
+        // Handle N/A Run Time
+        if (movieRunTime.equals("N/A")) {
+            return -1; // negative 1 will be N/A
+        }
+
         try {
             int firstSpaceIndex = movieRunTime.indexOf(" ");
             String movieRunTimeValue = movieRunTime.substring(0, firstSpaceIndex);

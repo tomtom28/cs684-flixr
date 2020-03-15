@@ -42,5 +42,35 @@ class OmdbDAOTest {
         }
     }
 
+    @Nested
+    class TestOmdbApiMovieIdConversions {
+
+        @Test
+        void testMovieIdToImdbId3Digits() {
+            int movieId = 417;
+            String expectedImdbId = "tt0000417";
+            OmdbDAO omdbDAO = new OmdbDAO();
+            assertEquals(expectedImdbId, omdbDAO.convertMovieIdToImdbId(movieId));
+        }
+
+        @Test
+        void testMovieIdToImdbId8Digits() {
+            int movieId = 114709;
+            String expectedImdbId = "tt0114709";
+            OmdbDAO omdbDAO = new OmdbDAO();
+            assertEquals(expectedImdbId, omdbDAO.convertMovieIdToImdbId(movieId));
+        }
+
+        @Test
+        void testMovieIdToImdbId9Digits() {
+            int movieId = 1133093;
+            String expectedImdbId = "tt1133093";
+            OmdbDAO omdbDAO = new OmdbDAO();
+            assertEquals(expectedImdbId, omdbDAO.convertMovieIdToImdbId(movieId));
+        }
+
+    }
+
+
 
 }
