@@ -7,12 +7,15 @@ import com.flixr.dao.EngineDAO;
 import com.flixr.dao.PredictionDAO;
 import com.flixr.engine.PredictionEngine;
 import com.flixr.beans.Prediction;
+import com.flixr.engine.RecommendationEngine;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * @author Thomas Thompson
@@ -55,6 +58,34 @@ public class RecommendationController {
         List<MovieWithPrediction> predictedMovies = predictionDAO.getPredictedMovies(predictions);
 
         return predictedMovies;
+    }
+
+
+    /**
+     * Launches the Recommendation Engine to begin a new training session
+     * This is a very time & CPU intensive process. Use with caution.
+     */
+    public void reTrainModel() throws EngineException{
+
+        try {
+            // Get a list of all Rated Movies
+            EngineDAO engineDAO = new EngineDAO();
+            TreeSet<Integer> sortedListOfMovieIds = engineDAO.getDistinctMovieIds();
+
+            // Generate all UserSubmissions
+            TreeMap<Integer, UserSubmission> sortedListOfUserSubmissions = engineDAO.getAllUserSubmissions();
+
+            // Launch a new instance of the Recommendation Engine
+            RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
+
+            // Train Model
+            recommendationEngine.trainModel(sortedListOfUserSubmissions);
+
+        } catch (DAOException e) {
+            System.out.println("Unable to get Distinct Movie Ids!");
+            e.printStackTrace();
+            throw new EngineException(e);
+        }
     }
 
 }

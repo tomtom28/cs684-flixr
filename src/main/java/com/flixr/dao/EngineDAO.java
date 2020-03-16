@@ -5,9 +5,7 @@ import com.flixr.exceptions.DAOException;
 import com.flixr.interfaces.IPredictionEngineDAO;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
@@ -21,6 +19,29 @@ import static com.flixr.configuration.ApplicationConstants.*;
 public class EngineDAO {
 
     public EngineDAO() {}
+
+    /**
+     * @return  Returns a list of (sorted) unique MovieIds
+     * @throws DAOException
+     */
+    public TreeSet<Integer> getDistinctMovieIds() throws DAOException {
+        TreeSet<Integer> distinctMovieIds = new TreeSet<>();
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT imdbId FROM ratings ORDER BY imdbId");
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Iterate Over MovieIds
+            while (resultSet.next()) {
+                int movieId = resultSet.getInt("imdbId");
+                distinctMovieIds.add(movieId);
+            }
+            conn.close();
+            return distinctMovieIds;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
 
     /**
      * @param userId    User Id
@@ -89,6 +110,39 @@ public class EngineDAO {
         }
     }
 
+
+    /**
+     * @return  Returns a list of all UserSubmissions in the Ratings table
+     * @throws DAOException
+     */
+    public TreeMap<Integer, UserSubmission> getAllUserSubmissions() throws DAOException {
+        try {
+            // Initialize user submissions
+            TreeMap<Integer, UserSubmission> userSubmissions = new TreeMap<>();
+
+            // Query Ratings table for all UserSubmissions
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT DISTINCT userId FROM ratings");
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Iterate over all User Id's in the ResultSet
+            while (resultSet.next()) {
+                int userId = resultSet.getInt("userId");
+                UserSubmission userSubmission = this.getUserSubmission(userId);
+                userSubmissions.put(userId, userSubmission);
+            }
+
+            // Close connection and return
+            conn.close();
+            return userSubmissions;
+
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+
+
     public void saveMatrixRowToDB(List<Number[]> matrixRow) throws DAOException {
 
         // Generate Query for current Matrix Row
@@ -116,7 +170,6 @@ public class EngineDAO {
         } catch (SQLException e) {
             throw new DAOException(e);
         }
-
     }
 
 }
