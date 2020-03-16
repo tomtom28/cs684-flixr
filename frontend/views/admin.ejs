@@ -11,8 +11,26 @@
   <button class="btn btn-success" type="button" name="button">Re-Train</button>
 </div>
 
-<div class="container text-left mt-5">
-  <h4>Analyze Ratings:</h4>
+<div class="container  mt-5 mb-3">
+  <div class="row">
+    <div class="col">
+      <h4 class="text-left">Analyze Ratings:</h4>
+    </div>
+
+    <div class="col">
+      <div class="text-right dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Sort By:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">Rating</a>
+          <a class="dropdown-item" href="#">Count</a>
+          <a class="dropdown-item" href="#">A~Z</a>
+          <a class="dropdown-item" href="#">Z~A</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <table class="table table-bordered">
   <thead>
