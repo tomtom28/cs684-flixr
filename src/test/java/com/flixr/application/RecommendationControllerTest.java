@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RecommendationControllerTest {
 
     @Nested
-    class PredictionEngineInterfaceTests {
+    class PredictionEngineTests {
 
         @Test
         void testGetTopMoviePredictions() {
@@ -42,6 +42,22 @@ class RecommendationControllerTest {
             }
         }
 
+    }
+
+
+    @Nested
+    class RecommendationEngineTests {
+
+        @Test
+        void testReTrainingOfRecommendationEngine() {
+            try {
+                RecommendationController recommendationController = new RecommendationController();
+                recommendationController.reTrainModel();
+            } catch (EngineException e) {
+                fail("Unable to train the Recommendation System: " + e.getEngineMessage());
+            }
+
+        }
     }
 
 }
