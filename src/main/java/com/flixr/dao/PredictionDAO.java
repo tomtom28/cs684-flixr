@@ -1,14 +1,16 @@
 package com.flixr.dao;
 
-import com.flixr.beans.Movie;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.Prediction;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.threads.PredictionMatrixThread;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
@@ -68,48 +70,44 @@ public class PredictionDAO implements IPredictionEngineDAO {
             matrixIndx++;
         }
 
-        // Query Database to Generate Correlation Matrix
+        // Determine # of entries per subset of movie list (partitioned by thread count)
+        int dividedCount = 1;
         try {
-            System.out.println("Querying Database... ");
-            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
-//            Statement stmt = conn.createStatement();
+            dividedCount = (int) Math.floor( (double) distinctMovieIds.size() / PRED_ENGINE_THREADS ) ;
+        } catch (ArithmeticException e) {
+            System.out.println("Warning: Number of Prediction Engine Threads must be at least 1!");
+            System.out.println("Proceeding with a single-threaded configuration: PRED_ENGINE_THREADS = 1");
+        }
 
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM recenginemodel WHERE movieIdi = ?");
+        // Determine split indices for new movie list sublists
+        int currentIndx = 0;
+        int[] splitIndxs = new int[PRED_ENGINE_THREADS + 1];
+        for (int i = 0; i < splitIndxs.length - 1; i++) {
+            splitIndxs[i] = currentIndx;
+            currentIndx += dividedCount;
+        }
+        splitIndxs[splitIndxs.length - 1] = distinctMovieIds.size(); // any remainders will just get tacked on to the last thread
 
-            // TODO : Try to improve performance by using threads
+        // Convert TreeSet to ArrayList (to facilitate splitting by index)
+        List<Integer> listOfDistinctMovieIds = new ArrayList<>(distinctMovieIds);
 
-            // Counter for logging
-            int count = 0;
-
-            // Iterate over all stored Rows in Matrix
-            for (int movieIdi : distinctMovieIds) {
-
-                stmt.setInt(1, movieIdi);
-                ResultSet resultSet = stmt.executeQuery();
-
-                // Iterate Over all DB Entries
-                while (resultSet.next()) {
-
-                    // Assumes format: (MovieId_i,MovieId_j,Rating)
-                    int movieIdMatrix_i = resultSet.getInt("MovieIdi");
-                    int movieIdMatrix_j = resultSet.getInt("MovieIdj");
-                    double avgRatingDifference = resultSet.getDouble("AvgDifference");;
-
-                    // Convert MovieId to Matrix Index
-                    int i = movieIdToMatrixIndex.get(movieIdMatrix_i);
-                    int j = movieIdToMatrixIndex.get(movieIdMatrix_j);
-
-                    // Add to internal matrix
-                    correlationMatrix[i][j] = avgRatingDifference;
-                }
-                count++;
-                System.out.println("Completed Matrix Row: " + count + " of " + distinctMovieIds.size());
+        // Spawn Threads for faster predictions
+        ExecutorService executor = Executors.newFixedThreadPool(PRED_ENGINE_THREADS);
+        try {
+            for (int i = 1; i <= PRED_ENGINE_THREADS; i++) {
+                // Pass in a subset of the movies
+                Set<Integer> subsetOfDistinctMovieIds = new TreeSet<>( listOfDistinctMovieIds.subList(splitIndxs[i-1], splitIndxs[i]) ) ;
+                // Run a service to compute a subset of the matrix
+                PredictionMatrixThread predictionMatrixThread = new PredictionMatrixThread(i, subsetOfDistinctMovieIds, correlationMatrix, movieIdToMatrixIndex);
+                executor.execute(predictionMatrixThread);
             }
 
-            // Completed Loading Matrix, close connection
-            System.out.println("Query Complete. Building Matrix... ");
-            conn.close();
-        } catch (SQLException e) {
+            // Wait for threads to complete
+            executor.shutdown();
+            while (!executor.isTerminated()) {}
+
+        } catch (RuntimeException e) {
+            System.out.println("Unable to generate Correlation Matrix! Problem encountered within Threads!");
             e.printStackTrace();
             throw new DAOException(e);
         }
@@ -204,8 +202,5 @@ public class PredictionDAO implements IPredictionEngineDAO {
             throw new DAOException(e);
         }
     }
-
-
-
 
 }

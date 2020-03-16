@@ -14,4 +14,8 @@ public class ApplicationConstants {
     // OMDB API Key
     public static final String OMDB_API_KEY = "ADD_HERE";
 
+    // Engine Thread Counts
+    public static final int PRED_ENGINE_THREADS = 4;
+    public static final int REC_ENGINE_THREADS = 4;
+
 }
