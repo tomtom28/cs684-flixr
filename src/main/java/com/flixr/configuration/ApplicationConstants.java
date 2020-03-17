@@ -16,6 +16,6 @@ public class ApplicationConstants {
 
     // Engine Thread Counts
     public static final int PRED_ENGINE_THREADS = 4;
-    public static final int REC_ENGINE_THREADS = 4;
+    public static final int REC_ENGINE_THREADS = 1;
 
 }

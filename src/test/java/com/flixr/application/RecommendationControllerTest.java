@@ -20,7 +20,7 @@ class RecommendationControllerTest {
         void testGetTopMoviePredictions() {
 
             // Test UserId 1, top 10
-            int userId = 1;
+            int userId = 432;
             int numMovies = 10;
 
             // Test DB Connection

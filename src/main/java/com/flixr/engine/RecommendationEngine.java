@@ -21,7 +21,10 @@ import java.util.*;
  * The output of this model gives the Average Rating Difference between two different Movies
  */
 
-public class RecommendationEngine {
+public class RecommendationEngine extends Thread {
+
+    // Engine Number (used for multi-threading)
+    private int engineNumber = 1; // (default is 1 for single threading)
 
     // Represents a 2D matrix
     private double[][] matrixOfMovieToMovieCorrelation; // Trained Model: (MovieId, MovieId) -> Rating Factor of Prediction
@@ -98,7 +101,7 @@ public class RecommendationEngine {
 
     // Saves the correlation matrix to a CSV files
     // This is used in StandAlone Mode
-    private void saveModelToCSV(String fullOutputFilePath) throws EngineException {
+    public void saveModelToCSV(String fullOutputFilePath) throws EngineException {
 
         // Compute Average Rating Differences and Save to CSV
         PrintWriter writer = null;
@@ -122,7 +125,7 @@ public class RecommendationEngine {
                 }
 
                 // Print progress
-                System.out.println("Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
+                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
             }
 
         } catch (Exception e) {
@@ -139,10 +142,16 @@ public class RecommendationEngine {
 
     // Saves the correlation matrix to a CSV files
     // This is used in StandAlone Mode
-    private void saveModelToDB() throws EngineException {
+    public void saveModelToDB() throws EngineException {
 
         // Compute Average Rating Differences and Save to Database
         try {
+
+            // Clears the current correlation matrix from the DB
+            EngineDAO engineDAO = new EngineDAO();
+            System.out.println("Deleting current Correlation Matrix from Database...");
+            engineDAO.deleteMatrixFromDB();
+            System.out.println("Correlation Matrix has been deleted from Database.");
 
             // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
             for (int i = 0; i < movieCount; i++) {
@@ -163,11 +172,10 @@ public class RecommendationEngine {
                 }
 
                 // Save Current Matrix Row to Database
-                EngineDAO engineDAO = new EngineDAO();
                 engineDAO.saveMatrixRowToDB(matrixRow);
 
                 // Print progress
-                System.out.println("Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
+                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
             }
 
         } catch (DAOException e) {
@@ -180,7 +188,7 @@ public class RecommendationEngine {
 
     // Generates the Correlation Matrix between Movie to Movie Ratings
     // Also tracks movie rating frequency
-    private void generateCorrelationMatrix() {
+    public void generateCorrelationMatrix() {
 
         // Iterate over every MovieIndex
         for (int i = 0; i < movieCount; i++) {
@@ -208,9 +216,29 @@ public class RecommendationEngine {
                 }
             }
             // Print progress
-            System.out.println("Correlation Matrix Computation: Completed Row " + (i+1) + " of " + movieCount);
+            System.out.println("Thread-" + engineNumber + " Correlation Matrix Computation: Completed Row " + (i+1) + " of " + movieCount);
         }
 
     }
+
+
+    // Support for Multi Threading
+    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Assigns the UserSubmissions to the given RecEngine instance
+     * @param userSubmissions
+     */
+    public void setUserSubmissions(Map<Integer, UserSubmission> userSubmissions) {
+        this.userSubmissions = userSubmissions;
+    }
+
+    /**
+     * Assigns the Engine Number (to identify the given instance)
+     * @param engineNumber  Engine Number (ex. 1)
+     */
+    public void setEngineNumber(int engineNumber) {
+        this.engineNumber = engineNumber;
+    }
+
 
 }
