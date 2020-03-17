@@ -1,40 +1,41 @@
 <%- include("header");-%>
 
-  <h3>Movie Title</h3>
+  <h3><%=movie.title%></h3>
 
 <div class="container">
 
 
   <div class="row showMoive">
     <div class="col align-self-center">
-      <a class="pointer" href="#"><h1><</h1></a>
+      <a class="pointer" href="/rating/prev"><h1><</h1></a>
     </div>
     <div class="col-6">
-      <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:350px; height:500px;">
+      <img src=<%=movie.poster_url%> alt="..." class="img-thumbnail" style="width:350px; height:500px;">
     </div>
     <div class="col align-self-center">
-      <a class="pointer" href="#"><h1>></h1></a>
+      <a class="pointer" href="/rating/next"><h1>></h1></a>
     </div>
   </div>
 
 
   <div class="row ratingbody">
-
+    <form class="" action="/rating/<%=movie.movie_id%>" method="post">
       <div class="rating align-self-center">
-        <input type="radio" name="star" id="star1"><label for="star1"></label>
-        <input type="radio" name="star" id="star2"><label for="star2"></label>
-        <input type="radio" name="star" id="star3"><label for="star3"></label>
-        <input type="radio" name="star" id="star4"><label for="star4"></label>
-        <input type="radio" name="star" id="star5"><label for="star5"></label>
+        <input type="radio" name="star5" id="star1"><label for="star1"></label>
+        <input type="radio" name="star4" id="star2"><label for="star2"></label>
+        <input type="radio" name="star3" id="star3"><label for="star3"></label>
+        <input type="radio" name="star2" id="star4"><label for="star4"></label>
+        <input type="radio" name="star1" id="star5"><label for="star5"></label>
       </div>
 
       <div class="buttonp">
         <div class="col align-self-center">
           <button class="btn btn-sm btn-primary mb-2 " type="submit">Submit</button>
           <br>
-          <button class="btn btn-sm btn-secondary " type="submit">Skip</button>
+          <!-- <button class="btn btn-sm btn-secondary " href="/rating/next">Skip</button> -->
         </div>
       </div>
+    </form>
   </div>
 
 

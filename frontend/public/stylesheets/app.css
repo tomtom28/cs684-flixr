@@ -1,4 +1,4 @@
-
+/* //created by Fangzhou Guo */
 
 .topspace{
    margin-top:80px;
@@ -51,7 +51,7 @@
 .buttonp{
   position: absolute;
   top:66%;
-  left: 52%;
+  left: 51%;
   transform:translate(-50%,-50%) ;
   display: flex;
 }

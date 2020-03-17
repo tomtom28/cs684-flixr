@@ -5,10 +5,16 @@
 </div>
 
 <div class="container bg-white border-right border-left border-top border-bottom shadow-sm text-left py-3">
-  <label for="">Name/Id:</label>
-  <input class="form-control mb-2" type="text" name="" value="">
-  <button class="btn btn-primary" type="button" name="button">Find</button>
-  <button class="btn btn-success" type="button" name="button">Re-Train</button>
+  <form action="/admin/newmovie" method="POST">
+      <div class="form-group">
+          <label for="New Movie Id">New Movie Id</label>
+          <input type="text" class="form-control" name="movie_id">
+      </div>
+      <button type="submit" class="btn btn-primary">Find</button>
+      <!-- <button class="btn btn-success" type="button" name="button">Re-Train</button> -->
+      <a class="btn btn-success" href="/re_train" role="button">Re-Train</a>
+  </form>
+
 </div>
 
 <div class="container  mt-5 mb-3">
@@ -23,10 +29,10 @@
           Sort By:
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#">Rating</a>
-          <a class="dropdown-item" href="#">Count</a>
-          <a class="dropdown-item" href="#">A~Z</a>
-          <a class="dropdown-item" href="#">Z~A</a>
+          <a class="dropdown-item" href="/admin/rating">Rating</a>
+          <a class="dropdown-item" href="/admin/count">Count</a>
+          <a class="dropdown-item" href="/admin/a~z">A~Z</a>
+          <a class="dropdown-item" href="/admin/z~a">Z~A</a>
         </div>
       </div>
     </div>
@@ -42,82 +48,17 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
+    <% var i=1; %>
+    <% items.forEach(function(item){ %>
+      <tr>
+        <th scope="row"><%= i %></th>
+        <td><%= item.title %></td>
+        <td><%= item.count %></td>
+        <td><%= item.rating %></td>
+      </tr>
+      <% ++i; %>
+   <%});%>
 
-    <tr>
-      <th scope="row">2</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">3</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">4</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">1</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">5</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">6</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">7</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">8</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">9</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
-
-    <tr>
-      <th scope="row">10</th>
-      <td>Mulan</td>
-      <td>100</td>
-      <td>90</td>
-    </tr>
 
 
   </tbody>
