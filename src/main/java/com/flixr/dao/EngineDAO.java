@@ -2,7 +2,6 @@ package com.flixr.dao;
 
 import com.flixr.beans.UserSubmission;
 import com.flixr.exceptions.DAOException;
-import com.flixr.interfaces.IPredictionEngineDAO;
 
 import java.sql.*;
 import java.util.*;

@@ -4,7 +4,7 @@ import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.Prediction;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
-import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.interfaces.IPredictionDAO;
 import com.flixr.threads.PredictionMatrixThread;
 
 import java.sql.*;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
-public class PredictionDAO implements IPredictionEngineDAO {
+public class PredictionDAO implements IPredictionDAO {
 
     private int totalCountOfMoviesInMatrix;
     private Set<Integer> distinctMovieIds;

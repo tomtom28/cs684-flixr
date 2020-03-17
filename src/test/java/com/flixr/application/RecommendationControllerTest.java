@@ -11,6 +11,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Thomas Thompson
+ */
 class RecommendationControllerTest {
 
     @Nested

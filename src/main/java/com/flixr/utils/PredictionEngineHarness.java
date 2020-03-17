@@ -2,7 +2,7 @@ package com.flixr.utils;
 
 import com.flixr.engine.PredictionEngine;
 import com.flixr.exceptions.EngineException;
-import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.interfaces.IPredictionDAO;
 import com.flixr.beans.Prediction;
 import com.flixr.beans.UserSubmission;
 
@@ -22,7 +22,7 @@ import java.util.TreeSet;
  * Purpose is for backend testing / development
  *
  */
-public class PredictionEngineHarness implements IPredictionEngineDAO {
+public class PredictionEngineHarness implements IPredictionDAO {
 
     private PredictionEngine predictionEngine;
     private String ratingInputFilePath;

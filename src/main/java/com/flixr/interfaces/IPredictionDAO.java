@@ -8,7 +8,7 @@ import com.flixr.exceptions.EngineException;
  * This a used for StandAlone testing, where the PredictionHarness can act as a DAO
  * This is so that the CSV can seem to mimic database actions
  */
-public interface IPredictionEngineDAO {
+public interface IPredictionDAO {
 
     public double getAveragePreferenceDifference(int movieId_i, int movieId_j) throws EngineException;
 

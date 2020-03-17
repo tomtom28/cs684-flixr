@@ -1,8 +1,7 @@
 package com.flixr.engine;
 
-import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
-import com.flixr.interfaces.IPredictionEngineDAO;
+import com.flixr.interfaces.IPredictionDAO;
 import com.flixr.beans.Prediction;
 import com.flixr.beans.UserSubmission;
 
@@ -25,7 +24,7 @@ import java.util.*;
 
 public class PredictionEngine {
 
-    private IPredictionEngineDAO predictionEngineDAO;
+    private IPredictionDAO predictionEngineDAO;
 
     private UserSubmission userSubmission;
     private Collection<Integer> movieIdsRatedByUser;
@@ -34,7 +33,7 @@ public class PredictionEngine {
 
     private List<Prediction> totalPredictions;
 
-    public PredictionEngine(UserSubmission userSubmission, Collection<Integer> movieIdsNotRatedByUser, IPredictionEngineDAO predictionEngineDAO) {
+    public PredictionEngine(UserSubmission userSubmission, Collection<Integer> movieIdsNotRatedByUser, IPredictionDAO predictionEngineDAO) {
         this.userSubmission = userSubmission;
         this.movieIdsNotRatedByUser = movieIdsNotRatedByUser;
         this.movieIdsRatedByUser = userSubmission.getMoviesViewed();
