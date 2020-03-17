@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * @author Thomas Thompson
+ */
 public class EngineDAOTest {
 
     @Test

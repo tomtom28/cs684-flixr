@@ -11,6 +11,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Thomas Thompson
+ */
 class RecommendationControllerTest {
 
     @Nested
@@ -20,7 +23,7 @@ class RecommendationControllerTest {
         void testGetTopMoviePredictions() {
 
             // Test UserId 1, top 10
-            int userId = 1;
+            int userId = 432;
             int numMovies = 10;
 
             // Test DB Connection

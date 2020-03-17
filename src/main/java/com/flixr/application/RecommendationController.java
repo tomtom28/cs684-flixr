@@ -7,15 +7,16 @@ import com.flixr.dao.EngineDAO;
 import com.flixr.dao.PredictionDAO;
 import com.flixr.engine.PredictionEngine;
 import com.flixr.beans.Prediction;
-import com.flixr.engine.RecommendationEngine;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
+import com.flixr.threads.RecEngineThread;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static com.flixr.configuration.ApplicationConstants.REC_ENGINE_THREADS;
 
 /**
  * @author Thomas Thompson
@@ -75,17 +76,71 @@ public class RecommendationController {
             // Generate all UserSubmissions
             TreeMap<Integer, UserSubmission> sortedListOfUserSubmissions = engineDAO.getAllUserSubmissions();
 
-            // Launch a new instance of the Recommendation Engine
-            RecommendationEngine recommendationEngine = new RecommendationEngine(sortedListOfMovieIds);
+            // Support Multi Threading by splitting up rated movies
+            int[] splitIndxs = this.getMatrixSplitPoints(sortedListOfMovieIds);
 
-            // Train Model
-            recommendationEngine.trainModel(sortedListOfUserSubmissions);
+            // Convert TreeSet to ArrayList (to facilitate splitting by index)
+            List<Integer> listOfDistinctMovieIds = new ArrayList<>(sortedListOfMovieIds);
+
+            // Spawn Threads for faster run time
+            ExecutorService executor = Executors.newFixedThreadPool(REC_ENGINE_THREADS);
+            try {
+                for (int i = 1; i <= REC_ENGINE_THREADS; i++) {
+                    // Create a subset of the movies for Rec Engine Thread
+                    TreeSet<Integer> subsetOfDistinctMovieIds = new TreeSet<>( listOfDistinctMovieIds.subList(splitIndxs[i-1], splitIndxs[i]) ) ;
+
+                    // Instantiate the given Engine Thread
+                    RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfMovieIds, sortedListOfUserSubmissions);
+
+                    // Run a service to compute a subset of the matrix, using the given Engine Thread
+                    executor.execute(recEngineThread);
+                }
+
+                // Wait for threads to complete
+                executor.shutdown();
+                while (!executor.isTerminated()) {}
+
+            } catch (RuntimeException e) {
+                System.out.println("Unable to compute Correlation Matrix! Problem encountered within Threads!");
+                e.printStackTrace();
+                throw new EngineException(e);
+            }
 
         } catch (DAOException e) {
             System.out.println("Unable to get Distinct Movie Ids!");
             e.printStackTrace();
             throw new EngineException(e);
         }
+    }
+
+
+    /**
+     * Determines the Start / End indices that evenly divide the full list of MovieIds
+     * The list will be divided by # of REC_ENGINE_THREADS
+     *
+     * @param sortedListOfMovieIds  List of all Movie Ids
+     * @return  Indexes of the Movie Ids List that dictate start/end points of the subset lists
+     */
+    private int[] getMatrixSplitPoints(TreeSet<Integer> sortedListOfMovieIds) {
+        // Determine # of entries per subset of movie list (partitioned by thread count)
+        int dividedCount = 1;
+        try {
+            dividedCount = (int) Math.floor( (double) sortedListOfMovieIds.size() / REC_ENGINE_THREADS ) ;
+        } catch (ArithmeticException e) {
+            System.out.println("Warning: Number of Recommendation Engine Threads must be at least 1!");
+            System.out.println("Proceeding with a single-threaded configuration: REC_ENGINE_THREADS = 1");
+        }
+
+        // Determine split indices for new movie list sublists
+        int currentIndx = 0;
+        int[] splitIndxs = new int[REC_ENGINE_THREADS + 1];
+        for (int i = 0; i < splitIndxs.length - 1; i++) {
+            splitIndxs[i] = currentIndx;
+            currentIndx += dividedCount;
+        }
+        splitIndxs[splitIndxs.length - 1] = sortedListOfMovieIds.size(); // any remainders will just get tacked on to the last thread
+
+        return splitIndxs;
     }
 
 }

@@ -2,7 +2,6 @@ package com.flixr.dao;
 
 import com.flixr.beans.UserSubmission;
 import com.flixr.exceptions.DAOException;
-import com.flixr.interfaces.IPredictionEngineDAO;
 
 import java.sql.*;
 import java.util.*;
@@ -78,7 +77,6 @@ public class EngineDAO {
         }
     }
 
-
     /**
      * @param   userId  User Id
      * @return  UserSubmission for a given User Id with all the Movies the user Rated
@@ -142,7 +140,11 @@ public class EngineDAO {
     }
 
 
-
+    /**
+     * Saves the Correlation Matrix to the Database
+     * @param matrixRow Matrix Row to be saved: {}movieId_i, movieId_j, averageRatingDifference}
+     * @throws DAOException
+     */
     public void saveMatrixRowToDB(List<Number[]> matrixRow) throws DAOException {
 
         // Generate Query for current Matrix Row
@@ -170,6 +172,26 @@ public class EngineDAO {
         } catch (SQLException e) {
             throw new DAOException(e);
         }
+    }
+
+    /**
+     * Deletes the current Correlation Matrix from the Database
+     * Warning: This should be used only when the site is under maintenance
+     * @throws DAOException
+     */
+    public void deleteMatrixFromDB() throws DAOException {
+        // TODO: Might want to look into better ways of sorting the last revision
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM RecEngineModel");
+            stmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Unable to delete Correlation Matrix!");
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
+
     }
 
 }
