@@ -24,24 +24,28 @@ public class RecEngineThread extends Thread {
     /**
      * Runs a Parallel Engine Instance for Multi-Threaded Support (with DB model saving)
      * @param engineNumber  Thread Number (ex. 1)
-     * @param listOfDistinctMovieIds    List of MovieId subset
-     * @param userSubmissions   List of all UserSubmissions (ie all movies rated by users)
+     * @param subListOfMovieIds    SubList of Movie Ids
+     * @param listOfAllMovieIds    List of all Movie Ids
+     * @param allUserSubmissions   List of all UserSubmissions (ie all movies rated by users)
      */
-    public RecEngineThread(int engineNumber, TreeSet<Integer> listOfDistinctMovieIds, Map<Integer, UserSubmission> userSubmissions) {
-        recommendationEngine = new RecommendationEngine(listOfDistinctMovieIds);
-        recommendationEngine.setUserSubmissions(userSubmissions);
+    public RecEngineThread(int engineNumber, TreeSet<Integer> subListOfMovieIds, TreeSet<Integer> listOfAllMovieIds,
+                           Map<Integer, UserSubmission> allUserSubmissions) {
+        recommendationEngine = new RecommendationEngine(subListOfMovieIds, listOfAllMovieIds);
+        recommendationEngine.setUserSubmissions(allUserSubmissions);
         recommendationEngine.setEngineNumber(engineNumber);
     }
 
     /**
      * Runs a Parallel Engine Instance for Multi-Threaded Support (with CSV model saving)
      * @param engineNumber  Thread Number (ex. 1)
-     * @param listOfDistinctMovieIds    List of MovieId subset
-     * @param userSubmissions   List of all UserSubmissions (ie all movies rated by users)
+     * @param subListOfMovieIds    SubList of Movie Ids
+     * @param listOfAllMovieIds    List of all Movie Ids
+     * @param allUserSubmissions   List of all UserSubmissions (ie all movies rated by users)
      * @param fullOutputPath    CSV File Output Path
      */
-    public RecEngineThread(int engineNumber, TreeSet<Integer> listOfDistinctMovieIds, Map<Integer, UserSubmission> userSubmissions, String fullOutputPath) {
-        this(engineNumber, listOfDistinctMovieIds, userSubmissions);
+    public RecEngineThread(int engineNumber, TreeSet<Integer> subListOfMovieIds, TreeSet<Integer> listOfAllMovieIds,
+                           Map<Integer, UserSubmission> allUserSubmissions, String fullOutputPath) {
+        this(engineNumber, subListOfMovieIds, listOfAllMovieIds, allUserSubmissions);
         this.saveToCSV = true;
         this.fullOutputPath = fullOutputPath;
     }

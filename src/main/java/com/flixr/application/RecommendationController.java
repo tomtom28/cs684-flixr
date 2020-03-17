@@ -90,7 +90,7 @@ public class RecommendationController {
                     TreeSet<Integer> subsetOfDistinctMovieIds = new TreeSet<>( listOfDistinctMovieIds.subList(splitIndxs[i-1], splitIndxs[i]) ) ;
 
                     // Instantiate the given Engine Thread
-                    RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfUserSubmissions);
+                    RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfMovieIds, sortedListOfUserSubmissions);
 
                     // Run a service to compute a subset of the matrix, using the given Engine Thread
                     executor.execute(recEngineThread);

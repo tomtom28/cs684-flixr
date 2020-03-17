@@ -21,11 +21,11 @@ import static com.flixr.configuration.ApplicationConstants.REC_ENGINE_THREADS;
  */
 public class RecommendationEngineHarness {
 
-    private TreeSet<Integer> sortedListOfMovieIds;
+    private TreeSet<Integer> sortedListOfAllMovieIds;
     private TreeMap<Integer, UserSubmission> sortedListOfUserSubmissions;
 
     public RecommendationEngineHarness() {
-        this.sortedListOfMovieIds = new TreeSet<>();
+        this.sortedListOfAllMovieIds = new TreeSet<>();
         this.sortedListOfUserSubmissions = new TreeMap<>();
     }
 
@@ -48,7 +48,7 @@ public class RecommendationEngineHarness {
                 processRating(userId, movieId, rating);
 
                 // Add to list of (unique) sorted MovieIds
-                sortedListOfMovieIds.add(movieId);
+                sortedListOfAllMovieIds.add(movieId);
             }
             bufferedReader.close();
         } catch (IOException e) {
@@ -82,8 +82,8 @@ public class RecommendationEngineHarness {
     // Trains the model (and saves to CSV)
     private void trainModel(String outputFilePrefix) {
         // Split Up List of MovieIds
-        int[] splitIndxs = getMatrixSplitPoints(this.sortedListOfMovieIds);
-        List<Integer> listOfDistinctMovieIds = new ArrayList<>(this.sortedListOfMovieIds);
+        int[] splitIndxs = getMatrixSplitPoints(this.sortedListOfAllMovieIds);
+        List<Integer> listOfDistinctMovieIds = new ArrayList<>(this.sortedListOfAllMovieIds);
 
         // Run MultiThreaded
         ExecutorService executor = Executors.newFixedThreadPool(REC_ENGINE_THREADS);
@@ -95,7 +95,7 @@ public class RecommendationEngineHarness {
             String currentOutputFilePath = outputFilePrefix + "-" + i +"-of-" + REC_ENGINE_THREADS + ".csv";
 
             // Instantiate the given Engine Thread
-            RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, this.sortedListOfUserSubmissions, currentOutputFilePath);
+            RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, this.sortedListOfAllMovieIds, this.sortedListOfUserSubmissions, currentOutputFilePath);
 
             // Run a service to compute a subset of the matrix, using the given Engine Thread
             executor.execute(recEngineThread);

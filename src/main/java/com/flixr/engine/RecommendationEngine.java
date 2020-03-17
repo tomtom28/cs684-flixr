@@ -30,7 +30,8 @@ public class RecommendationEngine extends Thread {
     private double[][] matrixOfMovieToMovieCorrelation; // Trained Model: (MovieId, MovieId) -> Rating Factor of Prediction
     private double[][] matrixOfMovieToMovieRatingDifferenceSums; // (MovieId, MovieId) -> Sum of all Movie to Movie Rating Differences among Users
     private int[][] matrixOfMovieToMovieRatingFrequency; // (MovieId, MovieId) -> Number of Users who Rated Both Movies in their submission
-    private int movieCount; // size of NxN matrix
+    private int movieCount_i; // horizontal size of NxM matrix (sublist)
+    private int movieCount_j; // vertical size of NxM matrix (full list)
 
     // Maps all MovieIds to a Matrix Index:
     private HashMap<Integer, Integer> matrixIndexToMovieId; // Index -> MovieId
@@ -40,67 +41,35 @@ public class RecommendationEngine extends Thread {
 
     /**
      * Creates a RecommendationEngine instance
-     * @param sortedListOfMovieIds    List of Unique MovieIds
+     * @param sortedSubListOfMovieIds   Sub List of Unique MovieIds
+     * @param sortedListOfAllMovieIds   List of All MovieIds
      */
-    public RecommendationEngine(TreeSet<Integer> sortedListOfMovieIds) {
+    public RecommendationEngine(TreeSet<Integer> sortedSubListOfMovieIds, TreeSet<Integer> sortedListOfAllMovieIds) {
 
         // Create 2D Matrices
-        movieCount = sortedListOfMovieIds.size();
-        matrixOfMovieToMovieCorrelation = new double[movieCount][movieCount];
-        matrixOfMovieToMovieRatingDifferenceSums = new double[movieCount][movieCount];
-        matrixOfMovieToMovieRatingFrequency = new int[movieCount][movieCount];
+        movieCount_i = sortedSubListOfMovieIds.size();
+        movieCount_j = sortedListOfAllMovieIds.size();
+
+        matrixOfMovieToMovieCorrelation = new double[movieCount_i][movieCount_j];
+        matrixOfMovieToMovieRatingDifferenceSums = new double[movieCount_i][movieCount_j];
+        matrixOfMovieToMovieRatingFrequency = new int[movieCount_i][movieCount_j];
 
         // Map MovieId to Matrix Index
         matrixIndexToMovieId = new HashMap<>();
         int index = 0;
-        for (Integer movieId : sortedListOfMovieIds) {
-            matrixIndexToMovieId.put(index,movieId);
+        for (Integer movieId : sortedListOfAllMovieIds) {
+            matrixIndexToMovieId.put(index, movieId);
             index++;
         }
     }
 
 
     /**
-     * Runs an implementation of the SlopeOne algorithm to determine the rating correlation between movies
-     * Outputs are stored in a Database using the EngineDAO
-     *
-     * @param userSubmissions  List of User Submissions (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
+     * Saves the correlation matrix to a CSV file(s)
+     * This is used in StandAlone Mode (typically runs faster)
+     * @param fullOutputFilePath
+     * @throws EngineException
      */
-    public void trainModel(Map<Integer, UserSubmission> userSubmissions) throws EngineException {
-
-        // Store list of UserSubmissions
-        this.userSubmissions = userSubmissions;
-
-        // Generate Correlations Between (MovieId to MovieId) and (Rating)
-        generateCorrelationMatrix();
-
-        // Save Correlation Matrix to Database
-        saveModelToDB();
-
-    }
-
-
-    /**
-     * Runs an implementation of the SlopeOne algorithm to determine the rating correlation between movies
-     * Outputs are stored in a CSV file at the file patch specified
-     *
-     * @param userSubmissions  List of RecEngineInput Objects (UserId, MovieId, Rating); NOTE: the list must be sorted by UserId
-     */
-    public void trainModel(Map<Integer, UserSubmission> userSubmissions, String fullOutputFilePath) throws EngineException {
-
-        // Store list of UserSubmissions
-        this.userSubmissions = userSubmissions;
-
-        // Generate Correlations Between (MovieId to MovieId) and (Rating)
-        generateCorrelationMatrix();
-
-        // Save Correlation Matrix to CSV file
-        saveModelToCSV(fullOutputFilePath);
-    }
-
-
-    // Saves the correlation matrix to a CSV files
-    // This is used in StandAlone Mode
     public void saveModelToCSV(String fullOutputFilePath) throws EngineException {
 
         // Compute Average Rating Differences and Save to CSV
@@ -111,8 +80,8 @@ public class RecommendationEngine extends Thread {
             writer.println("MovieID_i,MovieId_j,correlation");
 
             // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
-            for (int i = 0; i < movieCount; i++) {
-                for (int j = 0; j < movieCount; j++) {
+            for (int i = 0; i < movieCount_i; i++) {
+                for (int j = 0; j < movieCount_j; j++) {
 
                     // Only average movies that were rated
                     if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
@@ -125,7 +94,7 @@ public class RecommendationEngine extends Thread {
                 }
 
                 // Print progress
-                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
+                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount_i);
             }
 
         } catch (Exception e) {
@@ -140,8 +109,10 @@ public class RecommendationEngine extends Thread {
     }
 
 
-    // Saves the correlation matrix to a CSV files
-    // This is used in StandAlone Mode
+    /**
+     * Saves the correlation matrix to the database
+     * @throws EngineException
+     */
     public void saveModelToDB() throws EngineException {
 
         // Compute Average Rating Differences and Save to Database
@@ -154,12 +125,12 @@ public class RecommendationEngine extends Thread {
             System.out.println("Correlation Matrix has been deleted from Database.");
 
             // Iterate over all movies to get (Sum of Rating Difference) / (Count of Ratings)
-            for (int i = 0; i < movieCount; i++) {
+            for (int i = 0; i < movieCount_i; i++) {
 
                 // Collect results of current matrix row
                 List<Number[]> matrixRow = new ArrayList<>();
 
-                for (int j = 0; j < movieCount; j++) {
+                for (int j = 0; j < movieCount_j; j++) {
 
                     // Only average movies that were rated
                     if (matrixOfMovieToMovieRatingFrequency[i][j] > 0) {
@@ -175,7 +146,7 @@ public class RecommendationEngine extends Thread {
                 engineDAO.saveMatrixRowToDB(matrixRow);
 
                 // Print progress
-                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount);
+                System.out.println("Thread-" + engineNumber + " Saving Correlation Matrix: Completed Row " + (i+1) + " of " + movieCount_i);
             }
 
         } catch (DAOException e) {
@@ -186,15 +157,17 @@ public class RecommendationEngine extends Thread {
     }
 
 
-    // Generates the Correlation Matrix between Movie to Movie Ratings
-    // Also tracks movie rating frequency
+    /**
+     * Runs an implementation of the SlopeOne algorithm to determine the rating correlation between movies
+     * Generates the Correlation Matrix between Movie to Movie Ratings & tracks movie rating frequency
+     */
     public void generateCorrelationMatrix() {
 
         // Iterate over every MovieIndex
-        for (int i = 0; i < movieCount; i++) {
+        for (int i = 0; i < movieCount_i; i++) {
 
             // Iterate over every other MovieIndex
-            for (int j = 0; j < movieCount; j++) {
+            for (int j = 0; j < movieCount_j; j++) {
                 if (i!=j) {
 
                     // Convert to MovieIndices to MovieIds
@@ -216,7 +189,7 @@ public class RecommendationEngine extends Thread {
                 }
             }
             // Print progress
-            System.out.println("Thread-" + engineNumber + " Correlation Matrix Computation: Completed Row " + (i+1) + " of " + movieCount);
+            System.out.println("Thread-" + engineNumber + " Correlation Matrix Computation: Completed Row " + (i+1) + " of " + movieCount_i);
         }
 
     }
