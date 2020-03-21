@@ -139,7 +139,7 @@ app.post("/rating/:id",function(req,res){
   };
 
   request.post(
-    url+"/rating/"+user_email,
+    url+"/rating",
     {form:object},
     function (error, response, body) {
         if (!error && response.statusCode == 200) {

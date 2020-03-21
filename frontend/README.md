@@ -25,7 +25,7 @@ GET     "http://localhost:3001/rating/user_email/#0~9"
 Receive JSON:{movie_id:xxx, title:xxx, poster_url:xxx}
 
 Post the rating data to the server:
-POST    "http://localhost:3001/rating/user_email"
+POST    "http://localhost:3001/rating"
 Send JSON: {user_email:xxx, movie_id:xxx, grade:xxx}
 
 Get recommended movie from sever:
