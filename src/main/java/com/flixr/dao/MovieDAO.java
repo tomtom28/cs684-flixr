@@ -61,14 +61,46 @@ public class MovieDAO {
                 allMovies.add(movie);
             }
 
+
             // Close connection and return
             conn.close();
             return allMovies;
 
-        } catch (SQLException e) {
+        }
+
+        catch (SQLException e)
+        {
             throw new DAOException(e);
         }
     }
+
+    public void saveMove(Movie movie) throws DAOException //method puts all movies into getters
+    {
+        try {
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next())
+            {
+                movie.getMovieID();
+                movie.getMoviename();
+                movie.getReleasedate();
+                movie.getAgerating();
+                movie.getActors();
+                movie.getRuntime();
+                movie.getDirector();
+                movie.getWriter();
+                movie.getMoviePosterURL();
+
+            }
+        }
+
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
+    }
+
 }
 
 //do the same thing with UserDAO
