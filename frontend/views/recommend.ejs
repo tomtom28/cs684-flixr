@@ -1,124 +1,41 @@
 <%- include("header");-%>
 
 
+<div class="container ">
+  <div class="row">
+    <div class="col">
+      <h2 class="text-left">Recommend:</h2>
+    </div>
 
-  <h2 class="text-left">Recommend:</h2>
+    <div class="col">
+      <div class="text-right dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Sort By:
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="/recommend/top10">Top 10</a>
+          <a class="dropdown-item" href="/recommend/top100">Top 100</a>
+          <a class="dropdown-item" href="/recommend/a~z">A~Z</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
   <div class="container ">
 
      <div class="mt-5 row text-center" style="display:flex; flex-wrap: wrap;">
-
+       <% items.forEach(function(item){ %>
             <div class="col-md-4 col-sm-6 mb-4">
                 <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
+                   <img src=<%= item.poster_url%> alt="..." class="img-thumbnail" style="width:140px; height:200px;">
                    <div class="caption">
-                       <h4>Mulan</h4>
+                       <h4><%=item.title%></h4>
                    </div>
                 </div>
             </div>
 
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="thumbnail">
-                   <img src="https://imgix.ranker.com/user_node_img/4269/85376073/original/mulan-photo-u3?w=650&q=50&fm=pjpg&fit=fill&bg=fff" alt="..." class="img-thumbnail" style="width:140px; height:200px;">
-                   <div class="caption">
-                       <h4>Mulan</h4>
-                   </div>
-                </div>
-            </div>
-
-
-
-
-
+      <%});%>
 
 
 

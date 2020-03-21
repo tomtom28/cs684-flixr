@@ -1,4 +1,4 @@
-
+/* //created by Fangzhou Guo */
 
 .topspace{
    margin-top:80px;
@@ -28,18 +28,30 @@
     position: relative;
 }
 
+.showMoive{
+  /* border: 3px solid #73AD21; */
+}
+
+.ratingbody{
+  position: relative;
+  /* width: 100px; */
+  height: 200px;
+  /* border: 3px solid #73AD21; */
+}
+
 .rating{
+  /* border: 3px solid #73AD21; */
   position: absolute;
-  top:75%;
-  left: 58%;
+  top:20%;
+  left: 50%;
   transform:translate(-50%,-50%) rotateY(180deg);
   display: flex;
 }
 
 .buttonp{
   position: absolute;
-  top:84%;
-  left: 61%;
+  top:66%;
+  left: 51%;
   transform:translate(-50%,-50%) ;
   display: flex;
 }
