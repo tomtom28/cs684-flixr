@@ -16,14 +16,17 @@ var url="http://localhost:3001";
 var status;
 var movie_rate_count=0;
 
+//home page
 app.get("/",function(req,res){
   res.render("home");
 });
 
+//get the signin page
 app.get("/signin",function(req,res){
   res.render("signin");
 });
 
+//post signin info to sever
 app.post("/signin",function(req,res){
   //console.log(req.body);
   user_email=req.body.email;
@@ -39,10 +42,12 @@ app.post("/signin",function(req,res){
   res.redirect("/");
 });
 
+//get signup page
 app.get("/signup",function(req,res){
   res.render("signup");
 });
 
+//post signup info to server
 app.post("/signup",function(req,res){
   user_email=req.body.email;
   console.log(req.body);
@@ -58,6 +63,7 @@ app.post("/signup",function(req,res){
   res.redirect("/");
 });
 
+//logout
 app.get("/logout",function(req,res){
   http.get(url+"/logout/"+user_email,function(getback){
     getback.on("data",function(data){
@@ -68,6 +74,7 @@ app.get("/logout",function(req,res){
   res.redirect("/");
 });
 
+//check status
 app.get("/checkstatus",function(req,res){
   http.get(url+"/checkstatus/"+user_email,function(getback){
     getback.on("data",function(data){
@@ -78,6 +85,7 @@ app.get("/checkstatus",function(req,res){
   res.redirect("/");
 });
 
+//get the rating data
 app.get("/rating",function(req,res){
 
   http.get(url+"/rating/"+user_email+"/"+movie_rate_count,function(getback){
@@ -89,22 +97,25 @@ app.get("/rating",function(req,res){
   });
 });
 
+//rating data go previous
 app.get("/rating/prev",function(req,res){
     if(movie_rate_count-1<0){
-      movie_rate_count=movie_rate_count+9;
+      movie_rate_count=0;
       res.redirect("/rating");
     }else{
-      movie_rate_count=(movie_rate_count-1)%10;
+      movie_rate_count=movie_rate_count-1;
       res.redirect("/rating");
     }
 
 });
 
+//rating data go next
 app.get("/rating/next",function(req,res){
-    movie_rate_count=(movie_rate_count+1)%10;
+    movie_rate_count=movie_rate_count+1;
     res.redirect("/rating");
 });
 
+//post rating data to server
 app.post("/rating/:id",function(req,res){
   // console.log(req.params.id);
   // console.log(req.body);
@@ -140,8 +151,7 @@ app.post("/rating/:id",function(req,res){
   res.redirect("/rating/next");
 });
 
-
-
+//get the recommended movie from server
 app.get("/recommend/:sort_type",function(req,res){
 
   http.get(url+"/recommend/"+user_email+"/"+req.params.sort_type,function(getback){
@@ -157,6 +167,7 @@ app.get("/recommend/:sort_type",function(req,res){
 
 });
 
+//get the admin page
 app.get("/admin/:sort_type",function(req,res){
   http.get(url+"/admin/analyze/"+req.params.sort_type,function(getback){
 
@@ -168,6 +179,7 @@ app.get("/admin/:sort_type",function(req,res){
   });
 });
 
+//add new moives
 app.post("/admin/newmovie",function(req,res){
   //console.log(req.body);
   request.post(
@@ -183,15 +195,18 @@ app.post("/admin/newmovie",function(req,res){
   res.redirect("/admin/rating");
 });
 
+//re_train the dataset
 app.get("/re_train",function(req,res){
   http.get(url+"/admin/re_train");
   res.redirect("/admin/rating");
 });
 
+//about page
 app.get("/about",function(req,res){
   res.render("about");
 });
 
+//contact page
 app.get("/contact",function(req,res){
   res.render("contact");
 });
