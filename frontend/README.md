@@ -13,7 +13,7 @@ POST    "http://localhost:3001/signin"
 Send JSON: {email:xxx, password:xxx}
 
 Logout:
-GET     "http://localhost:3001/logout/user_email"
+GET     "http://localhost:3001/logout/user_id"
 Receive JSON:{email:xxx, status:xxx}
 
 Check status:
@@ -21,15 +21,15 @@ GET     "http://localhost:3001/checkstatus/user_email"
 Receive JSON:{email:xxx, status:xxx}
 
 To get the data to rate:
-GET     "http://localhost:3001/rating/user_email/#0~9"
+GET     "http://localhost:3001/rating/user_id/#0~unlimited"
 Receive JSON:{movie_id:xxx, title:xxx, poster_url:xxx}
 
 Post the rating data to the server:
 POST    "http://localhost:3001/rating"
-Send JSON: {user_email:xxx, movie_id:xxx, grade:xxx}
+Send JSON: {user_id:xxx, movie_id:xxx, grade:xxx}
 
 Get recommended movie from sever:
-GET     "http://localhost:3001/recommend/user_email/sort_type"
+GET     "http://localhost:3001/recommend/user_id/sort_type"
 Receive JSON:[{movie_id:xxx, title:xxx, poster_url:xxx,},{},{}...]
 
 Post a new movie to server:

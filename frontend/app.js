@@ -15,6 +15,7 @@ var user_email="g@m.com";
 var url="http://localhost:3001";
 var status;
 var movie_rate_count=0;
+var user_id="0";
 
 //home page
 app.get("/",function(req,res){
@@ -36,10 +37,11 @@ app.post("/signin",function(req,res){
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body);
+
         }
     }
   );
-  res.redirect("/");
+  res.redirect("/checkstatus");
 });
 
 //get signup page
@@ -57,15 +59,16 @@ app.post("/signup",function(req,res){
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body);
+            res.redirect("/checkstatus");
         }
     }
   );
-  res.redirect("/");
+  res.redirect("/checkstatus");
 });
 
 //logout
 app.get("/logout",function(req,res){
-  http.get(url+"/logout/"+user_email,function(getback){
+  http.get(url+"/logout/"+user_id,function(getback){
     getback.on("data",function(data){
       var i=JSON.parse(data);
       console.log(i);
@@ -74,12 +77,14 @@ app.get("/logout",function(req,res){
   res.redirect("/");
 });
 
-//check status
+//check statuse
 app.get("/checkstatus",function(req,res){
   http.get(url+"/checkstatus/"+user_email,function(getback){
     getback.on("data",function(data){
       var i=JSON.parse(data);
       console.log(i);
+      user_id=i.user_id;
+      console.log(user_id);
     });
   });
   res.redirect("/");
@@ -88,7 +93,7 @@ app.get("/checkstatus",function(req,res){
 //get the rating data
 app.get("/rating",function(req,res){
 
-  http.get(url+"/rating/"+user_email+"/"+movie_rate_count,function(getback){
+  http.get(url+"/rating/"+user_id+"/"+movie_rate_count,function(getback){
     getback.on("data",function(data){
       var i=JSON.parse(data);
     //  console.log(i);
@@ -133,7 +138,7 @@ app.post("/rating/:id",function(req,res){
   }
 
   var object={
-    user_email:user_email,
+    user_id:user_id,
     movie_id:req.params.id,
     grade:grade
   };
@@ -154,7 +159,7 @@ app.post("/rating/:id",function(req,res){
 //get the recommended movie from server
 app.get("/recommend/:sort_type",function(req,res){
 
-  http.get(url+"/recommend/"+user_email+"/"+req.params.sort_type,function(getback){
+  http.get(url+"/recommend/"+user_id+"/"+req.params.sort_type,function(getback){
 
     getback.on("data",function(data){
       var i=JSON.parse(data);
