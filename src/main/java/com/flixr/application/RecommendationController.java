@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.flixr.configuration.ApplicationConstants.REC_ENGINE_THREADS;
+import static com.flixr.configuration.ApplicationConstants.*;
 
 /**
  * @author Thomas Thompson
@@ -89,8 +89,15 @@ public class RecommendationController {
                     // Create a subset of the movies for Rec Engine Thread
                     TreeSet<Integer> subsetOfDistinctMovieIds = new TreeSet<>( listOfDistinctMovieIds.subList(splitIndxs[i-1], splitIndxs[i]) ) ;
 
-                    // Instantiate the given Engine Thread
-                    RecEngineThread recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfMovieIds, sortedListOfUserSubmissions);
+                    // Instantiate the given Engine Thread (select between DB or CSV mode)
+                    RecEngineThread recEngineThread;
+                    if (USE_CSV_MATRIX) {
+                        String matrixFilePrefix = CSV_MATRIX_FILE_PATH + CSV_MATRIX_FILE_PREFIX + "-" + i + "-of-" + REC_ENGINE_THREADS;
+                        recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfMovieIds, sortedListOfUserSubmissions, matrixFilePrefix);
+                    }
+                    else {
+                        recEngineThread = new RecEngineThread(i, subsetOfDistinctMovieIds, sortedListOfMovieIds, sortedListOfUserSubmissions);
+                    }
 
                     // Run a service to compute a subset of the matrix, using the given Engine Thread
                     executor.execute(recEngineThread);

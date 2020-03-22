@@ -22,19 +22,19 @@ public class MovieStats {
         this.totalRatingCount = totalRatingCount;
     }
 
-    public int getMovieId() {
+    public int getMovie_id() {
         return movieId;
     }
 
-    public String getMovieTitle() {
+    public String getTitle() {
         return movieTitle;
     }
 
-    public int getTotalRatingCount() {
+    public int getCount() {
         return totalRatingCount;
     }
 
-    public double getAverageRating() {
+    public double getRating() {
         return averageRating;
     }
 
@@ -53,4 +53,7 @@ public class MovieStats {
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
+
+
+
 }

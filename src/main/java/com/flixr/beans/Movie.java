@@ -1,27 +1,27 @@
 package com.flixr.beans;
 
 public class Movie {
-    private int movieID;
-    private String moviename;
+    private int movie_id;
+    private String title;
     private String releasedate;
     private String agerating;
     private String actors;
     private int runtime;
     private String director;
     private String writer;
-    private String moviePosterURL;
+    private String poster_url;
 
     public int getMovieID(){
-        return this.movieID;
+        return this.movie_id;
     }
     public void setMovieID(int movieID){
-        this.movieID = movieID;
+        this.movie_id = movieID;
     }
     public String getMoviename(){
-        return this.moviename;
+        return this.title;
     }
     public void setMoviename(String moviename) {
-        this.moviename = moviename;
+        this.title = moviename;
     }
     public String getReleasedate() {
         return releasedate;
@@ -59,10 +59,23 @@ public class Movie {
     public void setWriter(String writer) {
         this.writer = writer;
     }
-    public String getMoviePosterURL() {
-        return moviePosterURL;
-    }
+//    public String getMoviePosterURL() {
+//        return poster_url;
+//    }
     public void setMoviePosterURL(String moviePosterURL) {
-        this.moviePosterURL = moviePosterURL;
+        this.poster_url = moviePosterURL;
     }
+
+
+    // For Front End
+    public int getmovie_id(){
+        return this.movie_id;
+    }
+    public String getposter_url(){
+        return this.poster_url;
+    }
+    public String gettitle(){
+        return this.title;
+    }
+
 }

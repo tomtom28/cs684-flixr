@@ -20,8 +20,7 @@ public class MovieDAO {
         //iterate over results set
 
         try {
-            String query = "SELECT * " +
-                    "FROM movies "; //takes everything from movies table
+            String query = "SELECT * FROM movies ORDER BY MovieId DESC"; //takes everything from movies table
 
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -77,22 +76,19 @@ public class MovieDAO {
     public void saveMove(Movie movie) throws DAOException //method puts all movies into getters
     {
         try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            String query = "INSERT INTO movies(MovieId, MovieName, ReleaseDate, AgeRating, Actors, RunTime, Director, Writer, PosterURL) VALUES (?,?,?,?,?,?,?,?,?)"; //takes everything from movies table
             PreparedStatement stmt = conn.prepareStatement(query);
-            ResultSet resultSet = stmt.executeQuery();
-
-            while (resultSet.next())
-            {
-                movie.getMovieID();
-                movie.getMoviename();
-                movie.getReleasedate();
-                movie.getAgerating();
-                movie.getActors();
-                movie.getRuntime();
-                movie.getDirector();
-                movie.getWriter();
-                movie.getMoviePosterURL();
-
-            }
+            stmt.setInt(1, movie.getMovieID());
+            stmt.setString(2, movie.getMoviename());
+            stmt.setString(3, movie.getReleasedate());
+            stmt.setString(4, movie.getAgerating());
+            stmt.setString(5, movie.getActors());
+            stmt.setInt(6, movie.getRuntime());
+            stmt.setString(7, movie.getDirector());
+            stmt.setString(8, movie.getWriter());
+            stmt.setString(9, movie.getposter_url());
+            stmt.executeUpdate();
         }
 
         catch (SQLException e)

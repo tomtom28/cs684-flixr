@@ -5,7 +5,7 @@ public class User {
     private String fullname;
     private String password;
     private String email;
-    private String date;
+    private int age;
     private String country;
 
     public int getUserID(){
@@ -32,16 +32,22 @@ public class User {
     public void setEmail(String email){
         this.email = email;
     }
-    public String getDate(){
-        return this.date;
+    public int getAge(){
+        return this.age;
     }
-    public void setDate(String date){
-        this.date = date;
+    public void setAge(int age){
+        this.age = age;
     }
     public String getCountry(){
         return this.country;
     }
     public void SetCountry(String country){
         this.country = country;
+    }
+
+
+    // For Front End
+    public int getUser_id() {
+        return this.userID;
     }
 }
