@@ -2,7 +2,8 @@ package com.flixr.dao;
 
 /**
  * Authors: Zion Whitehall, Thomas Thompson
- *
+ * Inserts new Ratings by Users
+ * Returns Movie Analytics to Admin Page
  */
 
 import com.flixr.beans.MovieStats;
@@ -16,6 +17,7 @@ import static com.flixr.configuration.ApplicationConstants.*;
 
 public class RatingDAO
 {
+    // Thomas
     public void addMovieRating(int userID, int imdbID, double rating) {
         try {
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
@@ -36,13 +38,9 @@ public class RatingDAO
 
     }
 
+    // Zion
     public List<MovieStats> getMovieStatsByAvgRating() throws DAOException
     {
-        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
-        // SELECT QUERY to get all movies (like in MovieDAO) but then also added DB stats
-        // Might neeed a SQL GROUP BY imdbId query
-        // use AVG(rating) and Count(Rating)
-        // ORDER BY MovieTitle (or however its called in the DB)
         try
         {
             String query = "SELECT * FROM MovieStats ORDER BY AverageRating DESC";
@@ -52,15 +50,14 @@ public class RatingDAO
             PreparedStatement stmt = conn.prepareStatement(query);
 
             List<MovieStats> allMovieStats = new ArrayList<>();
-            // TODO - ZION iterate over ResultSet here
             ResultSet resultSet = stmt.executeQuery();
             // Iterate Over results & add to list
             while(resultSet.next())
             {
-                int imdbId = 100;
-                String movieTitle = "Test Movie";
-                int totalRatingCount = 1000;
-                double averageRating = 4.4;
+                int imdbId = resultSet.getInt("MovieId");
+                String movieTitle = resultSet.getString("MovieName");
+                int totalRatingCount = resultSet.getInt("RatingCount");
+                double averageRating = resultSet.getDouble("AverageRating");
                 MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
                 allMovieStats.add(movieStats);
             }
@@ -74,11 +71,10 @@ public class RatingDAO
 
     }
 
+    // Zion
     public List<MovieStats> getMovieStatsByTotalCount() throws DAOException
     {
 
-        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
-        // SELECT QUERY .... see slack
         List<MovieStats> allMovieStats = new ArrayList<>();
 
         try
@@ -88,14 +84,13 @@ public class RatingDAO
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
 
-            // TODO - ZION iterate over ResultSet here
             // Iterate Over results & add to list
             while(resultSet.next())
             {
-                int imdbId = 100;
-                String movieTitle = "Test Movie";
-                int totalRatingCount = 1000;
-                double averageRating = 4.4;
+                int imdbId = resultSet.getInt("MovieId");
+                String movieTitle = resultSet.getString("MovieName");
+                int totalRatingCount = resultSet.getInt("RatingCount");
+                double averageRating = resultSet.getDouble("AverageRating");
                 MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
                 allMovieStats.add(movieStats);
             }
@@ -109,27 +104,24 @@ public class RatingDAO
 
     }
 
+    // Zion
     public List<MovieStats> getMovieStatsByAtoZ() throws DAOException{
-
-        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
-        // SELECT QUERY .... see slack
 
         List<MovieStats> allMovieStats = new ArrayList<>();
 
         try
         {
-            String query = "SELECT * FROM MovieStats ORDER BY MovieName DESC";//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName ASC";//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
 
-            // TODO - ZION iterate over ResultSet here
             // Iterate Over results & add to list
             while (resultSet.next()) {
-                int imdbId = 100;
-                String movieTitle = "Test Movie";
-                int totalRatingCount = 1000;
-                double averageRating = 4.4;
+                int imdbId = resultSet.getInt("MovieId");
+                String movieTitle = resultSet.getString("MovieName");
+                int totalRatingCount = resultSet.getInt("RatingCount");
+                double averageRating = resultSet.getDouble("AverageRating");
                 MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
                 allMovieStats.add(movieStats);
             }
@@ -146,24 +138,20 @@ public class RatingDAO
     public List<MovieStats> getMovieStatsByZtoA() throws DAOException
     {
 
-        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
-        // SELECT QUERY .... see slack
-
         List<MovieStats> allMovieStats = new ArrayList<>();
 
         try {
-            String query = "SELECT * FROM MovieStats ORDER BY MovieName ASC";//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName DESC";//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
 
-            // TODO - ZION iterate over ResultSet here
             // Iterate Over results & add to list
             while (resultSet.next()) {
-                int imdbId = 100;
-                String movieTitle = "Test Movie";
-                int totalRatingCount = 1000;
-                double averageRating = 4.4;
+                int imdbId = resultSet.getInt("MovieId");
+                String movieTitle = resultSet.getString("MovieName");
+                int totalRatingCount = resultSet.getInt("RatingCount");
+                double averageRating = resultSet.getDouble("AverageRating");
                 MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
                 allMovieStats.add(movieStats);
             }
