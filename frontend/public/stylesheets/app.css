@@ -1,4 +1,8 @@
 /* //created by Fangzhou Guo */
+.title{
+  font-family: 'Tangerine', serif;
+  font-size: 66px;
+}
 
 .topspace{
    margin-top:80px;
@@ -92,4 +96,11 @@
 .rating label:hover~ label:after,
 .rating input:checked ~ label:after{
   opacity: 1;
+}
+
+.fixsize{
+  text-align: center;
+  height: 500px;
+  width: 600px;
+  background-color: powderblue;
 }
