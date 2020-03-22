@@ -2,8 +2,8 @@
 .DS_Store
 
 # Test output files (too big)
-/test_data/outputs
-/src/main/resources/ml-models
+/test_data/outputs/
+/src/main/resources/ml-models/
 
 
 # Compiled class file
