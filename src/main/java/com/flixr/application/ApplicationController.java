@@ -20,15 +20,14 @@ package com.flixr.application;
  * API Connections to Front End
  */
 
-import com.flixr.beans.Movie;
-import com.flixr.beans.MovieWithPrediction;
-import com.flixr.beans.User;
-import com.flixr.beans.UserSession;
+import com.flixr.beans.*;
 import com.flixr.dao.MovieDAO;
+import com.flixr.dao.OmdbDAO;
 import com.flixr.dao.RatingDAO;
 import com.flixr.dao.UserDAO;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
+import com.flixr.exceptions.OmdbException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +64,7 @@ public class ApplicationController {
 	}
 
 
+	// TODO VRAJ PLEASE FINISH USING USERDAO
 	/**
 	 * Sign in the User
 	 * @return	User Bean
@@ -124,9 +124,7 @@ public class ApplicationController {
 			MovieDAO movieDAO = new MovieDAO();
 			List<Movie> allMovies = movieDAO.getAllMovies();
 			Movie nextMovie = allMovies.get(movieIndex);
-
 			return nextMovie;
-
 		} catch (DAOException e) {
 			System.out.println("Error! Cannot find any movies in database!");
 			Movie errorMovie = new Movie();
@@ -136,7 +134,6 @@ public class ApplicationController {
 			errorMovie.setAgerating("N/A");
 			return errorMovie;
 		}
-
 	}
 
 
@@ -157,7 +154,7 @@ public class ApplicationController {
 
 
 	/**
-	 * Submits a
+	 * Gets the List of Top Rated Movies for a given User
 	 * @param userId
 	 * @return
 	 */
@@ -204,6 +201,68 @@ public class ApplicationController {
 
 	}
 
+	@GetMapping("/admin/analyze/{sort_type}")
+	@ResponseBody
+	public List<MovieStats> getAdminPage(@PathVariable(value="sort_type") String sortType) {
+
+		RatingDAO ratingDAO = new RatingDAO();
+
+		// Determine Results based on Sort Types
+		if (sortType.equals("a~z")) {
+			return ratingDAO.getMovieStatsByAtoZ();
+		}
+		else if (sortType.equals("z~a")) {
+			return ratingDAO.getMovieStatsByZtoA();
+		}
+		else if (sortType.equals("count")) {
+			return ratingDAO.getMovieStatsByTotalCount();
+		}
+		else { // default is rating
+			return ratingDAO.getMovieStatsByAvgRating();
+		}
+
+	}
+
+	@GetMapping("/admin/re_train")
+	@ResponseBody
+	public String reTrainModel() {
+		RecommendationController recommendationController = new RecommendationController();
+		try {
+			recommendationController.reTrainModel();
+			return "Model is Now Training... Please Wait...";
+		} catch (EngineException e) {
+			return "Error in Training: " + e.getEngineMessage();
+		}
+
+	}
+
+
+	@PostMapping("/admin/newmovie")
+	@ResponseBody
+	public String addNewMovie(@RequestParam(value="movie_id") String imdbId) {
+		try {
+			// Query OMDB API
+			OmdbDAO omdbDAO = new OmdbDAO();
+			Movie movie = omdbDAO.getMovieFromOmdbAPI(imdbId);
+
+			// Save to Database
+			MovieDAO movieDAO = new MovieDAO();
+			movieDAO.saveMove(movie);
+
+			System.out.println("MovieName: " + movie.getMoviename() + " added!");
+			return "New Movie Added Successfully!";
+
+		} catch (OmdbException e) {
+			String msg = "Unable to Find Movie with IMdbId = " + imdbId;
+			System.out.println(msg);
+			return msg;
+		} catch (DAOException e) {
+			String msg = "Unable to Save Movie: " + e.getMessage();
+			System.out.println(msg);
+			return msg;
+		}
+
+	}
 
 
 

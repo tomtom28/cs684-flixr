@@ -42,7 +42,7 @@ public class PredictionDAO implements IPredictionDAO {
         // Toggle Between CSV or DB stored Correlation Matrix
         if (USE_CSV_MATRIX) {
             String path = System.getProperty("user.dir");
-            String ratingInputFilePrefix = "/src/main/resources/ml-models/" + CSV_MATRIX_FILE_PREFIX + "-";
+            String ratingInputFilePrefix = CSV_MATRIX_FILE_PATH + CSV_MATRIX_FILE_PREFIX + "-";
             matrixCsvFilePathPrefix = path + ratingInputFilePrefix;
             generateMatrixModelFromCSV();
         }

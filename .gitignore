@@ -3,7 +3,7 @@
 
 # Test output files (too big)
 /test_data/outputs
-/test_data/outputs
+/src/main/resources/ml-models
 
 
 # Compiled class file
