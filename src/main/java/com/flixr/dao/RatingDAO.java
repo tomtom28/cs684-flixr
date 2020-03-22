@@ -1,12 +1,14 @@
 package com.flixr.dao;
 
+/**
+ * Authors: Zion Whitehall, Thomas Thompson
+ *
+ */
+
 import com.flixr.beans.MovieStats;
 import com.flixr.exceptions.DAOException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,86 +36,145 @@ public class RatingDAO
 
     }
 
-    public List<MovieStats> getMovieStatsByAvgRating() {
-
+    public List<MovieStats> getMovieStatsByAvgRating() throws DAOException
+    {
         // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
         // SELECT QUERY to get all movies (like in MovieDAO) but then also added DB stats
         // Might neeed a SQL GROUP BY imdbId query
         // use AVG(rating) and Count(Rating)
         // ORDER BY MovieTitle (or however its called in the DB)
+        try
+        {
+            String query = "SELECT COUNT(rating), AVG(rating) FROM ratings" +
+                    "SELECT * FROM movie GROUP BY MovieId ORDER BY MovieName DESC";
+            //query database for list of movies ordered by MovieName and the AVG and COUNT of ratings
+            //Connect to the SQL server
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
 
-        List<MovieStats> allMovieStats = new ArrayList<>();
+            List<MovieStats> allMovieStats = new ArrayList<>();
+            // TODO - ZION iterate over ResultSet here
+            ResultSet resultSet = stmt.executeQuery();
+            // Iterate Over results & add to list
+            while(resultSet.next())
+            {
+                int imdbId = 100;
+                String movieTitle = "Test Movie";
+                int totalRatingCount = 1000;
+                double averageRating = 4.4;
+                MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
+                allMovieStats.add(movieStats);
+            }
 
-        // TODO - ZION iterate over ResultSet here
-        // Iterate Over results & add to list
-        int imdbId = 100;
-        String movieTitle = "Test Movie";
-        int totalRatingCount = 1000;
-        double averageRating = 4.4;
-        MovieStats movieStats = new MovieStats(imdbId,movieTitle,totalRatingCount,averageRating);
-        allMovieStats.add(movieStats);
-
-        return allMovieStats;
+            return allMovieStats;
+        }
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
 
     }
 
-    public List<MovieStats> getMovieStatsByTotalCount() {
+    public List<MovieStats> getMovieStatsByTotalCount() throws DAOException
+    {
+
+        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
+        // SELECT QUERY .... see slack
+        List<MovieStats> allMovieStats = new ArrayList<>();
+
+        try
+        {
+            String query = //select query goes here
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
+
+            // TODO - ZION iterate over ResultSet here
+            // Iterate Over results & add to list
+            while(resultSet.next())
+            {
+                int imdbId = 100;
+                String movieTitle = "Test Movie";
+                int totalRatingCount = 1000;
+                double averageRating = 4.4;
+                MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
+                allMovieStats.add(movieStats);
+            }
+
+            return allMovieStats;
+        }
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
+
+    }
+
+    public List<MovieStats> getMovieStatsByAtoZ() throws DAOException{
 
         // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
         // SELECT QUERY .... see slack
 
         List<MovieStats> allMovieStats = new ArrayList<>();
 
-        // TODO - ZION iterate over ResultSet here
-        // Iterate Over results & add to list
-        int imdbId = 100;
-        String movieTitle = "Test Movie";
-        int totalRatingCount = 1000;
-        double averageRating = 4.4;
-        MovieStats movieStats = new MovieStats(imdbId,movieTitle,totalRatingCount,averageRating);
-        allMovieStats.add(movieStats);
+        try
+        {
+            String query = ;//select query goes here
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
 
-        return allMovieStats;
+            // TODO - ZION iterate over ResultSet here
+            // Iterate Over results & add to list
+            while (resultSet.next()) {
+                int imdbId = 100;
+                String movieTitle = "Test Movie";
+                int totalRatingCount = 1000;
+                double averageRating = 4.4;
+                MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
+                allMovieStats.add(movieStats);
+            }
+
+            return allMovieStats;
+        }
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
 
     }
 
-    public List<MovieStats> getMovieStatsByAtoZ() {
+    public List<MovieStats> getMovieStatsByZtoA() throws DAOException
+    {
 
         // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
         // SELECT QUERY .... see slack
 
         List<MovieStats> allMovieStats = new ArrayList<>();
 
-        // TODO - ZION iterate over ResultSet here
-        // Iterate Over results & add to list
-        int imdbId = 100;
-        String movieTitle = "Test Movie";
-        int totalRatingCount = 1000;
-        double averageRating = 4.4;
-        MovieStats movieStats = new MovieStats(imdbId,movieTitle,totalRatingCount,averageRating);
-        allMovieStats.add(movieStats);
+        try {
+            String query = ;//select query goes here
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet resultSet = stmt.executeQuery();
 
-        return allMovieStats;
+            // TODO - ZION iterate over ResultSet here
+            // Iterate Over results & add to list
+            while (resultSet.next()) {
+                int imdbId = 100;
+                String movieTitle = "Test Movie";
+                int totalRatingCount = 1000;
+                double averageRating = 4.4;
+                MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
+                allMovieStats.add(movieStats);
+            }
 
-    }
-
-    public List<MovieStats> getMovieStatsByZtoA() {
-
-        // TODO - ZION PLEASE ADD THE SQL JOINS HERE (see our Slack conversations from the other week)
-        // SELECT QUERY .... see slack
-
-        List<MovieStats> allMovieStats = new ArrayList<>();
-
-        // TODO - ZION iterate over ResultSet here
-        // Iterate Over results & add to list
-        int imdbId = 100;
-        String movieTitle = "Test Movie";
-        int totalRatingCount = 1000;
-        double averageRating = 4.4;
-        MovieStats movieStats = new MovieStats(imdbId,movieTitle,totalRatingCount,averageRating);
-        allMovieStats.add(movieStats);
-
-        return allMovieStats;
+            return allMovieStats;
+        }
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
 
     }
 
