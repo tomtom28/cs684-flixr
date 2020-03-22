@@ -45,8 +45,7 @@ public class RatingDAO
         // ORDER BY MovieTitle (or however its called in the DB)
         try
         {
-            String query = "SELECT COUNT(rating), AVG(rating) FROM ratings" +
-                    "SELECT * FROM movie GROUP BY MovieId ORDER BY MovieName DESC";
+            String query = "SELECT * FROM MovieStats ORDER BY AverageRating DESC";
             //query database for list of movies ordered by MovieName and the AVG and COUNT of ratings
             //Connect to the SQL server
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
@@ -84,7 +83,7 @@ public class RatingDAO
 
         try
         {
-            String query = //select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY RatingCount DESC";
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
@@ -119,7 +118,7 @@ public class RatingDAO
 
         try
         {
-            String query = ;//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName DESC";//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
@@ -153,7 +152,7 @@ public class RatingDAO
         List<MovieStats> allMovieStats = new ArrayList<>();
 
         try {
-            String query = ;//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName ASC";//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
