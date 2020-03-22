@@ -6,11 +6,19 @@ import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 import com.flixr.interfaces.IPredictionDAO;
 import com.flixr.threads.PredictionMatrixThread;
+import com.flixr.threads.ReadModelCsvThread;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
@@ -21,6 +29,8 @@ public class PredictionDAO implements IPredictionDAO {
     private double[][] correlationMatrix;
     private HashMap<Integer, Integer> movieIdToMatrixIndex; // MovieId -> Index
 
+    private String matrixCsvFilePathPrefix; // location of trained model CSV
+
     /**
      * Constructor without in memory storage
      * Used for much faster querying / prediction generation
@@ -28,7 +38,19 @@ public class PredictionDAO implements IPredictionDAO {
     public PredictionDAO() throws DAOException {
         setTotalCountOfMoviesInMatrix();
         setDistinctMovieIds();
-        generateMatrixModel();
+
+        // Toggle Between CSV or DB stored Correlation Matrix
+        if (USE_CSV_MATRIX) {
+            String path = System.getProperty("user.dir");
+            String ratingInputFilePrefix = "/src/main/resources/ml-models/" + CSV_MATRIX_FILE_PREFIX + "-";
+            matrixCsvFilePathPrefix = path + ratingInputFilePrefix;
+            generateMatrixModelFromCSV();
+        }
+        else {
+            generateMatrixModelFromDB();
+        }
+
+
     }
 
     /**
@@ -37,7 +59,7 @@ public class PredictionDAO implements IPredictionDAO {
      * @param movieId_j     MovieId in Matrix position j
      * @return  Correlation (i.e. average preference difference between Movie i and Movie j)
      */
-    public double getAveragePreferenceDifference(int movieId_i, int movieId_j) throws EngineException {
+    public double getAveragePreferenceDifference(int movieId_i, int movieId_j) {
         try {
             // Convert MovieId to MatrixIndex
             int i = movieIdToMatrixIndex.get(movieId_i);
@@ -46,15 +68,16 @@ public class PredictionDAO implements IPredictionDAO {
             // Return Average Difference
             return correlationMatrix[i][j];
 
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             System.out.println("Matrix Index was Invalid!");
-            e.printStackTrace();
-            throw new EngineException(e);
+            System.out.println("Assuming correlation to be 0.");
+//            e.printStackTrace();
+            return 0;
         }
     }
 
 
-    private void generateMatrixModel() throws DAOException {
+    private void generateMatrixModelFromDB() throws DAOException {
 
         // Track Progress
         System.out.println("Loading Correlation Matrix... ");
@@ -185,7 +208,7 @@ public class PredictionDAO implements IPredictionDAO {
                 movieWithPrediction.setRuntime(resultSet.getInt("runtime"));
                 movieWithPrediction.setDirector(resultSet.getString("director"));
                 movieWithPrediction.setWriter(resultSet.getString("writer"));
-                movieWithPrediction.setMoviePosterURL(resultSet.getString("moviePosterURL"));
+                movieWithPrediction.setMoviePosterURL(resultSet.getString("posterURL"));
 
                 // Set the Predicted Rating
                 movieWithPrediction.setPredictedRating(prediction.getPredictedRating());
@@ -202,5 +225,49 @@ public class PredictionDAO implements IPredictionDAO {
             throw new DAOException(e);
         }
     }
+
+
+    private void generateMatrixModelFromCSV() throws DAOException {
+        // Track Progress
+        System.out.println("Loading Correlation Matrix... ");
+
+        // Initialize Matrix & Index Map
+        correlationMatrix = new double[totalCountOfMoviesInMatrix][totalCountOfMoviesInMatrix];
+        movieIdToMatrixIndex = new HashMap<>();
+
+        // Map MovieId to Matrix Index
+        int matrixIndx = 0;
+        for (int movieId: distinctMovieIds) {
+            movieIdToMatrixIndex.put(movieId, matrixIndx);
+            matrixIndx++;
+        }
+
+        // Spawn Threads for faster predictions (NOTE: # of model.csv files must align with threads!!!)
+        ExecutorService executor = Executors.newFixedThreadPool(PRED_ENGINE_THREADS);
+        try {
+            for (int i = 1; i <= PRED_ENGINE_THREADS; i++) {
+                // Read model CSV file x of y
+                String currentFileName = matrixCsvFilePathPrefix + i + "-of-" + PRED_ENGINE_THREADS + ".csv";
+                ReadModelCsvThread readModelCsvThread = new ReadModelCsvThread(i, currentFileName, movieIdToMatrixIndex, correlationMatrix);
+                executor.execute(readModelCsvThread);
+            }
+
+            // Wait for threads to complete
+            executor.shutdown();
+            while (!executor.isTerminated()) {}
+
+
+        } catch (RuntimeException e) {
+            System.out.println("Unable to generate Correlation Matrix! Problem encountered within Threads!");
+            e.printStackTrace();
+            throw new DAOException(e);
+        }
+
+        System.out.println("Correlation Matrix Loaded.");
+
+
+    }
+
+
 
 }

@@ -18,4 +18,7 @@ public class ApplicationConstants {
     public static final int PRED_ENGINE_THREADS = 4;
     public static final int REC_ENGINE_THREADS = 4;
 
+    // Toggle Trained Model type (DB vs CSV)
+    public static final boolean USE_CSV_MATRIX = true;
+    public static final String CSV_MATRIX_FILE_PREFIX = "model";
 }

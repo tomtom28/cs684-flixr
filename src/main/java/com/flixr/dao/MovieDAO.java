@@ -20,8 +20,7 @@ public class MovieDAO {
         //iterate over results set
 
         try {
-            String query = "SELECT * " +
-                    "FROM movies "; //takes everything from movies table
+            String query = "SELECT * FROM movies ORDER BY MovieId DESC"; //takes everything from movies table
 
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -77,6 +76,8 @@ public class MovieDAO {
     public void saveMove(Movie movie) throws DAOException //method puts all movies into getters
     {
         try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            String query = "INSERT * FROM movies "; //takes everything from movies table
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
 
@@ -90,7 +91,7 @@ public class MovieDAO {
                 movie.getRuntime();
                 movie.getDirector();
                 movie.getWriter();
-                movie.getMoviePosterURL();
+                movie.getposter_url();
 
             }
         }

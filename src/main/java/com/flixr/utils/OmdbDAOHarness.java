@@ -43,7 +43,7 @@ public class OmdbDAOHarness {
         movieData += "\"" + movie.getRuntime() + "\"" + ",";
         movieData += "\"" + movie.getDirector() + "\"" + ",";
         movieData += "\"" + movie.getWriter() + "\"" + ",";
-        movieData += "\"" + movie.getMoviePosterURL() + "\"";
+        movieData += "\"" + movie.getposter_url() + "\"";
 
         return movieData;
     }
