@@ -204,21 +204,27 @@ public class ApplicationController {
 	@GetMapping("/admin/analyze/{sort_type}")
 	@ResponseBody
 	public List<MovieStats> getAdminPage(@PathVariable(value="sort_type") String sortType) {
-
 		RatingDAO ratingDAO = new RatingDAO();
-
-		// Determine Results based on Sort Types
-		if (sortType.equals("a~z")) {
-			return ratingDAO.getMovieStatsByAtoZ();
-		}
-		else if (sortType.equals("z~a")) {
-			return ratingDAO.getMovieStatsByZtoA();
-		}
-		else if (sortType.equals("count")) {
-			return ratingDAO.getMovieStatsByTotalCount();
-		}
-		else { // default is rating
-			return ratingDAO.getMovieStatsByAvgRating();
+		try {
+			// Determine Results based on Sort Types
+			if (sortType.equals("a~z")) {
+				return ratingDAO.getMovieStatsByAtoZ();
+			}
+			else if (sortType.equals("z~a")) {
+				return ratingDAO.getMovieStatsByZtoA();
+			}
+			else if (sortType.equals("count")) {
+				return ratingDAO.getMovieStatsByTotalCount();
+			}
+			else { // default is rating
+				return ratingDAO.getMovieStatsByAvgRating();
+			}
+		} catch(DAOException e) {
+			System.out.println("Unable to generate MovieStats!");
+			List<MovieStats> errMovieList = new ArrayList<>();
+			MovieStats movieStats = new MovieStats(0,"Database Error",0,0);
+			errMovieList.add(movieStats);
+			return errMovieList;
 		}
 
 	}
@@ -263,8 +269,5 @@ public class ApplicationController {
 		}
 
 	}
-
-
-
 
 }
