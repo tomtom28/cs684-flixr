@@ -13,10 +13,10 @@
           Sort By:
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="/recommend/top10">Top 10</a>
-          <a class="dropdown-item" href="/recommend/top25">Top 25</a>
-          <a class="dropdown-item" href="/recommend/top50">Top 50</a>
-          <a class="dropdown-item" href="/recommend/a~z">A~Z</a>
+          <a class="dropdown-item" href="/recommend/top10?page=1">Top 10</a>
+          <a class="dropdown-item" href="/recommend/top25?page=1">Top 25</a>
+          <a class="dropdown-item" href="/recommend/top50?page=1">Top 50</a>
+          <a class="dropdown-item" href="/recommend/a~z?page=1">A~Z</a>
         </div>
       </div>
     </div>
@@ -44,6 +44,50 @@
     </div>
 </div>
 
+<nav aria-label="Page navigation">
+    <% if (pages && pages > 0) { %>
+    <ul class="pagination justify-content-center">
+        <% if (current == 1) { %>
+        <li class="page-item disabled"><a class="page-link">First</a></li>
+        <% } else { %>
+        <li><a class="page-link" href="/recommend/<%=type%>">First</a></li>
+        <% } %>
+
+        <% if (current == 1) { %>
+        <li class="page-item disabled"><a class="page-link">«</a></li>
+        <% } else { %>
+        <li><a class="page-link" href="/recommend/<%=type%>?page=<%= Number(current) - 1 %>">«</a></li>
+        <% } %>
+
+        <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+        <% if (i !== 1) { %>
+        <li class="page-item disabled"><a class="page-link">...</a></li>
+        <% } %>
+        <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+        <% if (i == current) { %>
+        <li class="active"><a class="page-link"><%= i %></a></li>
+        <% } else { %>
+        <li><a class="page-link" href="/recommend/<%=type%>?page=<%= i %>"><%= i %></a></li>
+        <% } %>
+        <% if (i == Number(current) + 4 && i < pages) { %>
+        <li class="page-item disabled"><a class="page-link">...</a></li>
+        <% } %>
+        <% } %>
+
+        <% if (current == pages) { %>
+        <li class="page-item disabled"><a class="page-link">»</a></li>
+        <% } else { %>
+        <li><a class="page-link" href="/recommend/<%=type%>?page=<%= Number(current) + 1 %>">»</a></li>
+        <% } %>
+
+        <% if (current == pages) { %>
+        <li class="page-item disabled"><a class="page-link">Last</a></li>
+        <% } else { %>
+        <li><a class="page-link" href="/recommend/<%=type%>?page=<%= pages %>">Last</a></li>
+        <% } %>
+    </ul>
+    <% } %>
+</nav>
 
 
 <%- include("footer");-%>
