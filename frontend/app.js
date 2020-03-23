@@ -164,7 +164,24 @@ app.get("/recommend/:sort_type",function(req,res){
     getback.on("data",function(data){
       var i=JSON.parse(data);
       //console.log(i);
-      res.render("recommend",{items:i});
+      console.log(i.length);
+
+      var perPage=12;
+      var pageQuery=parseInt(req.query.page);
+      var pageNumber=pageQuery?pageQuery:1;
+
+      pageQuery--;
+
+      var items=
+      i.slice(perPage*pageQuery,perPage*pageQuery+perPage);
+
+      res.render("recommend",{
+        items:items,
+        current:pageNumber,
+        pages:Math.ceil(i.length/perPage),
+        type:req.params.sort_type
+      });
+
     });
   });
 
@@ -178,8 +195,29 @@ app.get("/admin/:sort_type",function(req,res){
 
     getback.on("data",function(data){
       var i=JSON.parse(data);
-      console.log(i);
-      res.render("admin",{items:i});
+
+      console.log(i.length);
+
+      var perPage=20;
+      var pageQuery=parseInt(req.query.page);
+      var pageNumber=pageQuery?pageQuery:1;
+
+      pageQuery--;
+
+      var items=
+      i.slice(perPage*pageQuery,perPage*pageQuery+perPage);
+
+      res.render("admin",{
+        items:items,
+        current:pageNumber,
+        pages:Math.ceil(i.length/perPage),
+        type:req.params.sort_type
+      });
+
+      // res.render("admin",{items:items,current:pageNumber,
+      //       pages:Math.ceil(count/perPage)});
+
+
     });
   });
 });
