@@ -31,9 +31,7 @@ import com.flixr.exceptions.OmdbException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 @Controller
@@ -59,12 +57,23 @@ public class ApplicationController {
 							@RequestParam(name="fullname") String fullname,
 							@RequestParam(name="age") int age,
 						   	@RequestParam(name="country") String country) {
+		// Insert User
 		UserDAO userDAO = new UserDAO();
 		userDAO.signUpUser(email, fullname, password, age, country);
+
+		// Create User
+//		User user = new User();
+//		try {
+//			UserDAO userDAO2 = new UserDAO();
+//			user = userDAO2.signInUser(email, password);
+//		} catch (DAOException e) {
+//			System.out.println("Invalid User! Email and Password did not match!");
+//		}
+//		return user;
+
 	}
 
 
-	// TODO VRAJ PLEASE FINISH USING USERDAO
 	/**
 	 * Sign in the User
 	 * @return	User Bean
@@ -75,11 +84,13 @@ public class ApplicationController {
 						   @RequestParam(name="password") String password) {
 
 		// Create User and User Session
-		UserDAO userDAO = new UserDAO();
-		User user = userDAO.signInUser(email, password);
-		UserSession userSession = new UserSession(user);
-//		mapOfUserEmailToUserSession.put(user.getEmail(), userSession);
-
+		User user = new User();
+		try {
+			UserDAO userDAO = new UserDAO();
+			user = userDAO.signInUser(email, password);
+		} catch (DAOException e) {
+			System.out.println("Invalid User! Email and Password did not match!");
+		}
 		return user;
 	}
 
@@ -92,9 +103,6 @@ public class ApplicationController {
 	@GetMapping("/logout/{user_email}")
 	@ResponseBody
 	public HashMap<String, String> logOutUser(@PathVariable(value="user_email") String userEmail) {
-
-		// Sign out User
-//		ApplicationController.mapOfUserEmailToUserSession.get(userEmail).setStatus(false);
 
 		// Response
 		HashMap<String, String> response = new HashMap<>();
@@ -109,7 +117,7 @@ public class ApplicationController {
 	@ResponseBody
 	public User checkUserStatus(@PathVariable(value="user_email") String email) {
 		UserDAO userDAO = new UserDAO();
-		User user = userDAO.signInUser(email, "sss"); // TODO fix this once session in place
+		User user = userDAO.checkUserStatus(email);
 		return user;
 	}
 
@@ -160,15 +168,26 @@ public class ApplicationController {
 	 */
 	@GetMapping("/recommend/{user_id}/{sort_type}")
 	@ResponseBody
-	public List<MovieWithPrediction> checkUserStatus(@PathVariable(value="user_id") int userId,
-													 @PathVariable(value="sort_type") String sortType) {
+	public List<MovieWithPrediction> getMovieRecommendations(@PathVariable(value="user_id") int userId,
+															 @PathVariable(value="sort_type") String sortType) {
 
 		// Parse Sort Types
-		int numberOfMoviePredictions = 10;
+		int numberOfMoviePredictions;
 		boolean sortAlphabetic = false;
 		if (sortType.equals("top100")) {
 			numberOfMoviePredictions = 100;
 		}
+		else if (sortType.equals("top50")) {
+			numberOfMoviePredictions = 50;
+		}
+		else if (sortType.equals("top25")) {
+			numberOfMoviePredictions = 25;
+		}
+		else {
+			numberOfMoviePredictions = 10;
+		}
+
+		// A to Z sort
 		if (sortType.equals("a~z")) {
 			sortAlphabetic = true;
 		}
@@ -181,7 +200,12 @@ public class ApplicationController {
 
 			// Sort Movies Alphabetically if needed
 			if(sortAlphabetic) {
-				// TODO Collections.sort();
+				Collections.sort(topMovieRecommendations, new Comparator<MovieWithPrediction>() {
+					@Override
+					public int compare(MovieWithPrediction o1, MovieWithPrediction o2) {
+						 return o1.getMoviename().compareToIgnoreCase(o2.getMoviename());
+					}
+				});
 			}
 
 			return topMovieRecommendations;
