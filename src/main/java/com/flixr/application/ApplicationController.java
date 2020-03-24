@@ -189,6 +189,7 @@ public class ApplicationController {
 
 		// A to Z sort
 		if (sortType.equals("a~z")) {
+			numberOfMoviePredictions = 25;
 			sortAlphabetic = true;
 		}
 
