@@ -30,6 +30,8 @@ public class RatingDAO
             stmt.executeUpdate();
 
             // Close connection
+            String insertedTuple = "(" + userID + "," + imdbID + "," + rating + ")";
+            System.out.println("Insert Query Completed: " + insertedTuple);
             conn.close();
 
         } catch (SQLException e) {
@@ -43,7 +45,7 @@ public class RatingDAO
     {
         try
         {
-            String query = "SELECT * FROM MovieStats ORDER BY AverageRating DESC";
+            String query = "SELECT * FROM MovieStats ORDER BY AverageRating DESC LIMIT " + MAX_ADMIN_LIMIT;
             //query database for list of movies ordered by MovieName and the AVG and COUNT of ratings
             //Connect to the SQL server
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
@@ -79,7 +81,7 @@ public class RatingDAO
 
         try
         {
-            String query = "SELECT * FROM MovieStats ORDER BY RatingCount DESC";
+            String query = "SELECT * FROM MovieStats ORDER BY RatingCount DESC LIMIT " + MAX_ADMIN_LIMIT;
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
@@ -111,7 +113,7 @@ public class RatingDAO
 
         try
         {
-            String query = "SELECT * FROM MovieStats ORDER BY MovieName ASC";//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName ASC LIMIT " + MAX_ADMIN_LIMIT;//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();
@@ -141,7 +143,7 @@ public class RatingDAO
         List<MovieStats> allMovieStats = new ArrayList<>();
 
         try {
-            String query = "SELECT * FROM MovieStats ORDER BY MovieName DESC";//select query goes here
+            String query = "SELECT * FROM MovieStats ORDER BY MovieName DESC LIMIT " + MAX_ADMIN_LIMIT;//select query goes here
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
             ResultSet resultSet = stmt.executeQuery();

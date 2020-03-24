@@ -8,7 +8,7 @@ public class ApplicationConstants {
 
     // Database Credentials
     public static final String DB_USERNAME = "root";
-    public static final String DB_PASSWORD = "";
+    public static final String DB_PASSWORD = "root";
     public static final String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/flixr";
 
     // OMDB API Key
@@ -22,4 +22,7 @@ public class ApplicationConstants {
     public static final boolean USE_CSV_MATRIX = true;
     public static final String CSV_MATRIX_FILE_PATH = "/src/main/resources/ml-models/";
     public static final String CSV_MATRIX_FILE_PREFIX = "model";
+
+    // Max Admin Page Limit
+    public static final int MAX_ADMIN_LIMIT = 50;
 }

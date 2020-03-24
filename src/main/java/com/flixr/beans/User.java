@@ -41,7 +41,7 @@ public class User {
     public String getCountry(){
         return this.country;
     }
-    public void SetCountry(String country){
+    public void setCountry(String country){
         this.country = country;
     }
 
