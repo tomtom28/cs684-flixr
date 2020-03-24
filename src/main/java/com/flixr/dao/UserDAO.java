@@ -9,18 +9,17 @@ import java.util.*;
 import static com.flixr.configuration.ApplicationConstants.*;
 
 public class UserDAO {
-    UserDAO userDAO = new UserDAO();
-    User user = new User();
     // Login
     String useremail,userpassword;
     boolean login = false;
-    public void loginUser(String email, String password) throws DAOException {
+    public User signInUser(String email, String password){
         try{
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
-            PreparedStatement stmt = conn.prepareStatement("SELECT EmailAddress, UserPassword FROM Users");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Users WHERE email = ? and password = ?");
             stmt.setString(1,email);
             stmt.setString(2,password);
             ResultSet resultSet = stmt.executeQuery();
+
             while(resultSet.next()){
                 useremail = resultSet.getString(email);
                 userpassword = resultSet.getString(password);
@@ -33,11 +32,26 @@ public class UserDAO {
         }
         catch(SQLException ex)
         {
-            throw new DAOException(ex);
+            System.out.println("Query Failed");
         }
+        
+        int userId = 1;
+        String fullName = "John Smith";
+        int age = 19;
+        String country = "USA";
+
+        User user = new User();
+        user.setUserID(userId);
+        user.setFullname(fullName);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setAge(age);
+        user.setCountry(country);
+        return user;
     }
+
     //Sign up
-    public void signUpUser(String email, String password, String fullname, int age, String country) throws DAOException {
+    public void signUpUser(String email, String password, String fullname, int age, String country){
         try {
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO Users(EmailAddress,UserPassword,FullName,Age,Country) VALUES (?,?,?,?,?)");
@@ -46,17 +60,10 @@ public class UserDAO {
             stmt.setString(3, fullname);
             stmt.setInt(4, age);
             stmt.setString(5, country);
-            ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
-                String useremail = resultSet.getString(email);
-                String userpassword = resultSet.getString(password);
-                String userfullname = resultSet.getString(fullname);
-                int userage = resultSet.getInt(age);
-                String usercountry = resultSet.getString(country);
-            }
-        }
-        catch(SQLException ex){
-            throw new DAOException(ex);
+            stmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Query Failed");
         }
     }
 }
