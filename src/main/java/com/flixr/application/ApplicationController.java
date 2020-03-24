@@ -192,6 +192,7 @@ public class ApplicationController {
 			numberOfMoviePredictions = 25;
 			sortAlphabetic = true;
 		}
+		
 
 		// Call on recommendation controller
 		RecommendationController recommendationController = new RecommendationController();
