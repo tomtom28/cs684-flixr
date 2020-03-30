@@ -13,17 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Thomas Thompson
+ * Integration Tests related to the Recommendatation Controller
  */
 class RecommendationControllerTest {
 
     @Nested
     class PredictionEngineTests {
 
+        /**
+         * TT: Integration Test # 2
+         * Retrieve N number of MoviesWithPredictions, ensure that DB and Engine interfaces are working
+         * Note: that it is assumed that the unit tests for PredictionDAO and PredictionEngine are judging the accuracy of the predictions
+         */
         @Test
         void testGetTopMoviePredictions() {
 
             // Test UserId 1, top 10
-            int userId = 432;
+            int userId = 1;
             int numMovies = 10;
 
             // Test DB Connection
@@ -32,16 +38,15 @@ class RecommendationControllerTest {
                 RecommendationController recommendationController = new RecommendationController();
                 List<MovieWithPrediction> predictedMovies = recommendationController.getTopMoviePredictions(userId, numMovies);
 
-                // Check that Movie counts match
+                // Movie count must match
                 assertEquals(numMovies, predictedMovies.size(), "Number of movies must match the count");
-
-                // TODO not entirely sure how to gauge correctness of the prediction
-                // add more tests ...
 
             } catch (DAOException e) {
                 fail("Unable to query database: " + e.getMessage());
             } catch (EngineException e) {
                 fail("Unable to generate prediction: " + e.getMessage());
+            } catch (Exception e) {
+                fail("Unknown error: " + e.getMessage());
             }
         }
 
@@ -51,13 +56,20 @@ class RecommendationControllerTest {
     @Nested
     class RecommendationEngineTests {
 
+        /**
+         * TT: Integration Test # 3
+         * Retrain the model, ensure that Engine & I/O interfaces are working
+         * Note: that it is assumed that the unit tests for RecommendationEngine will access performance and/or accuracy
+         */
         @Test
         void testReTrainingOfRecommendationEngine() {
             try {
                 RecommendationController recommendationController = new RecommendationController();
                 recommendationController.reTrainModel();
             } catch (EngineException e) {
-                fail("Unable to train the Recommendation System: " + e.getEngineMessage());
+                fail("Unable to train the Recommendation Engine: " + e.getEngineMessage());
+            } catch (Exception e) {
+                fail("Unable to train the Recommendation Engine: " + e.getMessage());
             }
 
         }
