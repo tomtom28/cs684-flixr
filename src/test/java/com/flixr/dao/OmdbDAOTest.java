@@ -11,28 +11,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Thomas Thompson
+ * Unit Tests related to the OMDB API; i.e. retreiving data from a third party API
  */
 class OmdbDAOTest {
 
     @Nested
     class TestOmdbApiQueries {
 
+        /**
+         * TT: Unit Test # 1
+         * Ensure that OMDB API is successfully queried & that correct attributes are returned for the selected ImdbId
+         */
         @Test
         void getMovieFromOmdbAPI() {
-
-            String imdbId = "tt0114709";
-
             // Query OMDB API for new Movie
+            String imdbId = "tt0114709";
             try {
                 OmdbDAO omdbDAO = new OmdbDAO();
                 Movie movie = omdbDAO.getMovieFromOmdbAPI(imdbId);
-                // TODO might need deeper testing check
+                // Check that key movie attributes match:
+                String expectedMovieName = "Toy Story";
+                String expectedReleaseDate = "22 Nov 1995";
+                String expectedAgeRating = "G";
+                assertEquals(expectedMovieName, movie.getMoviename());
+                assertEquals(expectedAgeRating, movie.getAgerating());
+                assertEquals(expectedReleaseDate, movie.getReleasedate());
             } catch (OmdbException e) {
                 fail("Unable to process API request: " + e.getMessage());
                 e.printStackTrace();
             }
         }
 
+        /**
+         * TT: Unit Test # 2
+         * Ensure that an exception is thrown if an invalid ImdbId is sent to the OmbdDAO
+         */
         @Test
         void getInvalidMovieFromOmdbAPI() {
             String invalidId = "tt404404";
@@ -42,6 +55,10 @@ class OmdbDAOTest {
         }
     }
 
+    /**
+     * TT: Unit Test(s) # 3
+     * Ensure that the OmdbDAO supports conversions between movieId (i.e. integer format) and ImdbId (i.e. string format)
+     */
     @Nested
     class TestOmdbApiMovieIdConversions {
 
@@ -70,7 +87,5 @@ class OmdbDAOTest {
         }
 
     }
-
-
 
 }

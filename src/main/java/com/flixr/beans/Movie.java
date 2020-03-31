@@ -2,6 +2,9 @@ package com.flixr.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * @author Vraj Desai
+ */
 public class Movie {
     private int movie_id;
     private String title;
@@ -90,6 +93,51 @@ public class Movie {
     }
     public String gettitle(){
         return this.title;
+    }
+
+
+    /**
+     * Added by Thomas Thompson
+     * Checks if MovieWithPrediction equals another MovieWithPrediction object
+     * @param o Object
+     * @return  Returns true if type is Movie and all fields are matched
+     */
+    @Override
+    public boolean equals(Object o) {
+
+        if (o instanceof Movie) {
+
+            // Convert to Movie object
+            Movie m = (Movie) o;
+
+            // Get all fields
+            int movie_id = m.getmovie_id();
+            String title = m.gettitle();
+            String releasedate = m.getReleasedate();
+            String agerating = m.getAgerating();
+            String actors = m.getActors();
+            int runtime = m.getRuntime();
+            String director = m.getDirector();
+            String writer = m.getWriter();
+            String poster_url = m.getposter_url();
+
+            // Check all fields
+            if (this.movie_id != movie_id) return false;
+            if (!this.title.equalsIgnoreCase(title)) return false;
+            if (!this.releasedate.equalsIgnoreCase(releasedate)) return false;
+            if (!this.agerating.equalsIgnoreCase(agerating)) return false;
+            if (!this.actors.equalsIgnoreCase(actors)) return false;
+            if (this.runtime != runtime) return false;
+            if (!this.director.equalsIgnoreCase(director)) return false;
+            if (!this.writer.equalsIgnoreCase(writer)) return false;
+            if (!this.poster_url.equalsIgnoreCase(poster_url)) return false;
+
+            return true;
+
+        }
+
+        return false;
+
     }
 
 }

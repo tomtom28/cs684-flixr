@@ -3,22 +3,14 @@ package com.flixr.dao;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.Prediction;
 import com.flixr.exceptions.DAOException;
-import com.flixr.exceptions.EngineException;
 import com.flixr.interfaces.IPredictionDAO;
 import com.flixr.threads.PredictionMatrixThread;
 import com.flixr.threads.ReadModelCsvThread;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
@@ -49,7 +41,6 @@ public class PredictionDAO implements IPredictionDAO {
         else {
             generateMatrixModelFromDB();
         }
-
 
     }
 
@@ -264,7 +255,6 @@ public class PredictionDAO implements IPredictionDAO {
         }
 
         System.out.println("Correlation Matrix Loaded.");
-
 
     }
 
