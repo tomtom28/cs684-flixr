@@ -20,9 +20,15 @@
       <img style="width: 50px; height:50px;"src="/stylesheets/clapperboard.png" alt="">
       <h1 class="my-0 mr-md-auto ml-2 font-weight-normal navfont"> flixr</h1>
       <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" href="/signup">Sign up</a>
-        <a class="p-2 text-dark" href="/signin">Sign in</a>
-        <a class="p-2 text-dark" href="/logout">Logout</a>
+        <%if(!currentUser){%>
+          <a class="p-2 text-dark" href="/signup">Sign up</a>
+          <a class="p-2 text-dark" href="/signin">Sign in</a>
+        <%}else{%>
+                    <a class="p-2 text-dark" href="/">Hi <%=currentUser.username%></a>
+                    <a class="p-2 text-dark" href="/logout">Logout</a>
+        <%  }%>
+
+
       </nav>
     </div>
 
@@ -42,10 +48,12 @@
               <li class="active">
   	            <a href="/recommend/top10?page=1" class="text-dark"><span class="fa  mr-3"></span> Recommend</a>
   	          </li>
+              <%if(currentUser&&currentUser.username=="admin@admin"){%>
               <br>
               <li class="active">
   	            <a href="/admin/rating?page=1" class="text-dark"><span class="fa  mr-3"></span> Admin</a>
   	          </li>
+              <%}%>
               <br>
   	          <li>
   	              <a href="/about" class="text-dark"><span class="fa  mr-3"></span> About</a>
