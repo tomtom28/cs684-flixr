@@ -10,7 +10,7 @@ Send JSON: {email:xxx, fullname:xxx, password:xxx, age:xxx, country:xxx}
 
 Signin:
 POST    "http://localhost:3001/signin"
-Send JSON: {email:xxx, password:xxx}
+Send JSON: {email:xxx, pass word:xxx}
 
 Logout:
 GET     "http://localhost:3001/logout/user_id"
@@ -42,3 +42,11 @@ GET     "http://localhost:3001/admin/re_train"
 Get the Analyze Ratings:
 GET     "http://localhost:3001/admin/analyze/sort_type"
 Receive JSON:[{movie_id:xxx, title:xxx, count:xxx, rating:xxx},{},{}...]
+
+User searched a new movie to rate:
+POST    "http://localhost:3001/nextorate"
+Send JSON: {user_email:xxx, movie_rate_count:xxx, movie_name:xxx}
+Explain:when user search a new movie, server should set the new movie as the next movie to rate.
+For example, currently the user is rating his 4th movie, and he searches a new movie, then the sever should feed back the new movie as his 5th movie to rate.
+
+Note: when user_email== admin@admin, the admin page will show up.

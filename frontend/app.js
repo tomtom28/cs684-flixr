@@ -356,10 +356,19 @@ app.get("/contact",function(req,res){
   res.render("contact");
 });
 
-app.post("/rating/search",function(req,res){
-  console.log(req.body.search);
-
-  res.redirect("/rating");
+app.post("/rating/search/movie",function(req,res){
+ var obj={user_email:req.user.username , movie_rate_count:req.user.movie_rate_count+1, movie_name:req.body.search};
+  request.post(
+    url+"/nextorate",
+    {form:obj},
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+        }
+    }
+  );
+  console.log(obj);
+  res.redirect("/rating/next");
 });
 
 app.listen(process.env.PORT||3000, function() {

@@ -21,8 +21,11 @@
     <div class="col align-self-center">
     </div>
     <div class="col-5 align-self-center">
-    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2" action="/rating/search" method="post">
-        <input name="search" class="form-control form-control-sm " type="text" placeholder="Movie to rate">
+    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2" action="/rating/search/movie" method="POST">
+      <div class="form-group">
+        <input name="search" class="form-control form-control-sm " type="text" placeholder="movie name">
+      </div>
+
         <button class="btn btn-sm btn-light ml-2 " type="submit">Search</button>
     </form>
     </div>
