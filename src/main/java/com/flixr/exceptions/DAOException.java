@@ -13,4 +13,7 @@ public class DAOException extends SQLException {
     public DAOException(RuntimeException e) {
         super(e);
     }
+    public DAOException(NullPointerException e) {
+        super(e);
+    }
 }

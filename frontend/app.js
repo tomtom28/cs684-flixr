@@ -52,26 +52,28 @@ passport.use(new LocalStrategy({
       function (error, response, body) {
           if (!error && response.statusCode == 200) {
               console.log(body);
+
+              var user
+              ={username:username,password:password,movie_rate_count:0};
+              http.get(url+"/checkstatus/"+username,function(getback){
+                getback.on("data",function(data){
+                  var i=JSON.parse(data);
+                  console.log(i);
+                  user_id=i.user_id;
+                  console.log(user_id);
+
+                  if(i.status=="off"){
+                    return done(null,false);
+                  }
+                  else if(i.status=="on"){
+                    return done(null,user);
+                  }
+                });
+              });
+
           }
       }
     );
-    var user
-    ={username:username,password:password,movie_rate_count:0};
-    http.get(url+"/checkstatus/"+username,function(getback){
-      getback.on("data",function(data){
-        var i=JSON.parse(data);
-        console.log(i);
-        user_id=i.user_id;
-        console.log(user_id);
-
-        if(i.status=="off"){
-          return done(null,false);
-        }
-        else if(i.status=="on"){
-          return done(null,user);
-        }
-      });
-    });
 
   }
 ));

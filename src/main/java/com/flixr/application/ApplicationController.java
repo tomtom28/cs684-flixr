@@ -25,6 +25,7 @@ import com.flixr.dao.MovieDAO;
 import com.flixr.dao.OmdbDAO;
 import com.flixr.dao.RatingDAO;
 import com.flixr.dao.UserDAO;
+import com.flixr.exceptions.ApiException;
 import com.flixr.exceptions.DAOException;
 import com.flixr.exceptions.EngineException;
 import com.flixr.exceptions.OmdbException;
@@ -52,24 +53,20 @@ public class ApplicationController {
 	 */
 	@PostMapping("/signup")
 	@ResponseBody
-	public void signUpUser(	@RequestParam(name="email") String email,
+	public User signUpUser(	@RequestParam(name="email") String email,
 						   	@RequestParam(name="password") String password,
 							@RequestParam(name="fullname") String fullname,
 							@RequestParam(name="age") int age,
-						   	@RequestParam(name="country") String country) {
+						   	@RequestParam(name="country") String country) throws ApiException {
 		// Insert User
 		UserDAO userDAO = new UserDAO();
-		userDAO.signUpUser(email, fullname, password, age, country);
-
-		// Create User
-//		User user = new User();
-//		try {
-//			UserDAO userDAO2 = new UserDAO();
-//			user = userDAO2.signInUser(email, password);
-//		} catch (DAOException e) {
-//			System.out.println("Invalid User! Email and Password did not match!");
-//		}
-//		return user;
+		try {
+			User user = userDAO.signUpUser(email, fullname, password, age, country);
+			return user;
+		} catch (DAOException e) {
+			System.out.println("Invalid User! Email and Password did not match!");
+			throw new ApiException();
+		}
 
 	}
 
@@ -81,32 +78,40 @@ public class ApplicationController {
 	@PostMapping("/signin")
 	@ResponseBody
 	public User signInUser(@RequestParam(name="email") String email,
-						   @RequestParam(name="password") String password) {
+						   @RequestParam(name="password") String password) throws ApiException {
 
-		// Create User and User Session
-		User user = new User();
 		try {
+			// Create User and User Session
 			UserDAO userDAO = new UserDAO();
-			user = userDAO.signInUser(email, password);
+			User user = userDAO.signInUser(email, password);
+			return user;
 		} catch (DAOException e) {
 			System.out.println("Invalid User! Email and Password did not match!");
+			throw new ApiException();
 		}
-		return user;
 	}
 
 
 	/**
 	 * Logout the User
-	 * @param userEmail
+	 * @param userId
 	 * @return
 	 */
-	@GetMapping("/logout/{user_email}")
+	@GetMapping("/logout/{userId}")
 	@ResponseBody
-	public HashMap<String, String> logOutUser(@PathVariable(value="user_email") String userEmail) {
+	public HashMap<String, String> logOutUser(@PathVariable(value="userId") int userId) {
+
+		// Clear Session
+		UserDAO userDAO = new UserDAO();
+		try {
+			userDAO.logOutUser(userId);
+		} catch (DAOException e) {
+			System.out.println("Logout Error: " + e.getMessage() + " for userId: " + userId);
+		}
 
 		// Response
 		HashMap<String, String> response = new HashMap<>();
-		response.put("email", userEmail);
+		response.put("userId", userId + "");
 		response.put("status", "off");
 
 		return response;
@@ -115,10 +120,15 @@ public class ApplicationController {
 
 	@GetMapping("/checkstatus/{user_email}")
 	@ResponseBody
-	public User checkUserStatus(@PathVariable(value="user_email") String email) {
-		UserDAO userDAO = new UserDAO();
-		User user = userDAO.checkUserStatus(email);
-		return user;
+	public UserWithStatus checkUserStatus(@PathVariable(value="user_email") String email) throws ApiException {
+		try {
+			UserDAO userDAO = new UserDAO();
+			UserWithStatus userWithStatus = userDAO.checkUserStatus(email);
+			return userWithStatus;
+		} catch (DAOException e) {
+			System.out.println("No active session found for user: " + email);
+			throw new ApiException();
+		}
 	}
 
 
