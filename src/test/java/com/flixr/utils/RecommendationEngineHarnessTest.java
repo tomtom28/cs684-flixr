@@ -43,6 +43,9 @@ class RecommendationEngineHarnessTest {
     @Test
     void testRunOfRecommendationEngineHarness() {
 
+        int numberOfMatrixDiagonalTests = 10;
+        int numberOfMatrixSymmetryTests = 100;
+
         try {
             // Call Engine Harness to generates input objects
             recommendationEngineHarness.readInputFile(recEngineHarnessTestOracle.getProjectPath() + recEngineHarnessTestOracle.getDefaultInputFile());
@@ -57,18 +60,21 @@ class RecommendationEngineHarnessTest {
             recEngineHarnessTestOracle.loadDefaultCorrelationMatrix();
 
             // Step 1 - Test N number of random positions along matrix diagonal
-            for (int i = 0; i <= recEngineHarnessTestOracle.getNumberOfRandomTests(); i++) {
+            System.out.println("Confirming Matrix Diagonals...");
+            for (int i = 0; i < numberOfMatrixDiagonalTests; i++) {
                 double matrixDiagonalValue = recEngineHarnessTestOracle.getRandomMatrixDiagonalValue();
                 assertEquals(0.0, matrixDiagonalValue, "Correlation Matrix Diagonal values must be 0.0!");
+                System.out.println("Successful Test " + (i+1) + " of " + (numberOfMatrixDiagonalTests + 1));
             }
 
             // Step 2 - Test N number of random mirrored positions (i,j) = -(j,i)
-            for (int i = 0; i <= recEngineHarnessTestOracle.getNumberOfRandomTests(); i++) {
+            System.out.println("\nConfirming Matrix Symmetry...");
+            for (int i = 0; i < numberOfMatrixSymmetryTests; i++) {
                 int pos_i = recEngineHarnessTestOracle.getRandomMatrixIndex();
                 int pos_j = recEngineHarnessTestOracle.getRandomMatrixIndex();
                 double matrixValue_i_j = recEngineHarnessTestOracle.getMatrixValue(pos_i, pos_j);
-                double matrixValue_j_i = recEngineHarnessTestOracle.getMatrixValue(pos_j, pos_i);
-                assertEquals(matrixValue_i_j, -1.0 * matrixValue_j_i, "Correlation Matrix must be symmetrical!");
+                assertEquals(matrixValue_i_j, recEngineHarnessTestOracle.getMirroredMatrixValue(pos_i, pos_j), "Correlation Matrix must be symmetrical for (" + pos_i + ", " + pos_j + ") and (" + pos_j + ", " + pos_i + ")");
+                System.out.println("Successful Test " + (i+1) + " of " + (numberOfMatrixSymmetryTests + 1) + "... Matching Value = " + matrixValue_i_j);
             }
 
         } catch (Exception e) {
@@ -188,46 +194,39 @@ class RecommendationEngineHarnessTest {
             }
 
             // Reads file, assuming it is in CSV format
-            String line = null;
-            try {
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(this.getProjectPath() + this.getDefaultInputFile()));
-                bufferedReader.readLine(); // skips header row
-                while ( (line = bufferedReader.readLine()) != null ) {
+            for (int fileNumber = 1; fileNumber <= REC_ENGINE_THREADS; fileNumber++) {
+                String line = null;
+                BufferedReader bufferedReader = null;
+                try {
+                    bufferedReader = new BufferedReader(new FileReader(this.getProjectPath() + this.getOutputFilePrefix() + "-" + fileNumber + "-of-" + REC_ENGINE_THREADS + ".csv"));
+                    bufferedReader.readLine(); // skips header row
+                    while ( (line = bufferedReader.readLine()) != null ) {
 
-                    // Assumes format: (MovieId_i,MovieId_j,Rating)
-                    String[] input = line.split(",");
-                    int movieIdMatrix_i = Integer.parseInt(input[0]);
-                    int movieIdMatrix_j = Integer.parseInt(input[1]);
-                    double avgRatingDifference = Double.parseDouble(input[2]);
+                        // Assumes format: (MovieId_i,MovieId_j,Rating)
+                        String[] input = line.split(",");
+                        int movieIdMatrix_i = Integer.parseInt(input[0]);
+                        int movieIdMatrix_j = Integer.parseInt(input[1]);
+                        double avgRatingDifference = Double.parseDouble(input[2]);
 
-                    // Convert MovieId to Matrix Index
-                    int i = movieIdToMatrixIndex.get(movieIdMatrix_i);
-                    int j = movieIdToMatrixIndex.get(movieIdMatrix_j);
+                        // Convert MovieId to Matrix Index
+                        int i = movieIdToMatrixIndex.get(movieIdMatrix_i);
+                        int j = movieIdToMatrixIndex.get(movieIdMatrix_j);
 
-                    // Add to internal matrix
-                    correlationMatrix[i][j] = avgRatingDifference;
+                        // Add to internal matrix
+                        correlationMatrix[i][j] = avgRatingDifference;
+                    }
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    System.out.println("Unable to read input file: \n" + this.getProjectPath() + this.getOutputFilePrefix() + "-" + fileNumber + "-of-" + REC_ENGINE_THREADS + ".csv");
+                    e.printStackTrace();
+                    throw new EngineException(e);
+                } catch (NumberFormatException e) {
+                    System.out.println("Unable to parse the following line: \n" + line);
+                    e.printStackTrace();
+                    throw new EngineException(e);
                 }
-
-                bufferedReader.close();
-
-                System.out.println("Correlation Matrix Loaded.");
-
-            } catch (IOException e) {
-                System.out.println("Unable to read input file: \n" + this.getDefaultInputFile());
-                e.printStackTrace();
-                throw new EngineException(e);
-            } catch (NumberFormatException e) {
-                System.out.println("Unable to parse the following line: \n" + line);
-                e.printStackTrace();
-                throw new EngineException(e);
-            } catch (NullPointerException e ) {
-                e.printStackTrace();
-                System.out.println("Unable to parse the following line: \n" + line + "\n" +
-                        "Likely issue: The movieIdToMatrixIndex may be missing a movieId. \n" +
-                        "Possible fix: Ensure that the model.csv and ratings.csv are aligned.");
-                throw new EngineException(e);
             }
-
+            System.out.println("Correlation Matrix Loaded.");
         }
 
 
@@ -243,6 +242,7 @@ class RecommendationEngineHarnessTest {
 
             // Diagonal occurs where (i = j) aka (i, i)
             int i = getRandomMatrixIndex();
+            System.out.println("Generated Matrix Diagonal: i=" + i + " and j=" + i);
             return correlationMatrix[i][i]; // matrix should be NxN
         }
 
@@ -276,7 +276,24 @@ class RecommendationEngineHarnessTest {
             return correlationMatrix[i][j];
         }
 
+        /**
+         * @param i Matrix Index i
+         * @param j Matrix Index j
+         * @return  Returns expected mirrored value at Correlation Matrix position (i, j); i.e. (-1 * (j, i))
+         */
+        public double getMirroredMatrixValue(int i, int j) {
 
+            // Matrix must be initialized
+            if (correlationMatrix == null) {
+                return -1.0;
+            }
+
+            double mirroredValue = -1.0 * correlationMatrix[j][i];
+            System.out.println("Generated Matrix Mirror: (" + i + ", " + j + ") -> (" + j  + ", " + i + ")");
+            if (mirroredValue == -0.0) return 0.0; // Handle -0.0 issue
+            else return mirroredValue;
+
+        }
 
         public String getDefaultInputFile() {
             return inputFiles[1]; // default is 10 users
@@ -296,6 +313,10 @@ class RecommendationEngineHarnessTest {
 
         public int getNumberOfRandomTests() {
             return numberOfRandomTests;
+        }
+
+        public double[][] getCorrelationMatrix() {
+            return correlationMatrix;
         }
     }
 
