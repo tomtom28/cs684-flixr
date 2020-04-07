@@ -34,18 +34,18 @@ class PredictionDAOTest {
             int numberOfMoviePredictions = NUM_OF_MOVIE_PREDICIONS;
 
             // Create Randomly Generated Predictions
-            PredictionDAOTestHelper predictionDAOTestHelper = new PredictionDAOTestHelper();
-            List<Prediction> predictions = predictionDAOTestHelper.generateRandomPredictions(numberOfMoviePredictions);
+            PredictionDAOOracle predictionDAOOracle = new PredictionDAOOracle();
+            List<Prediction> predictions = predictionDAOOracle.generateRandomPredictions(numberOfMoviePredictions);
 
             // Generate MoviesWithPredictions using PredictionDAO
             PredictionDAO predictionDAO = new PredictionDAO();
             List<MovieWithPrediction> predictedMovies = predictionDAO.getPredictedMovies(predictions);
 
             // Check that MovieWithPrediction objects are aligned with database
-            List<MovieWithPrediction> expectedPredictedMovies = predictionDAOTestHelper.generateMoviesWithPredictions(predictions);
+            List<MovieWithPrediction> expectedPredictedMovies = predictionDAOOracle.generateMoviesWithPredictions(predictions);
 
             // Check that all fields are aligned
-            assertTrue(predictionDAOTestHelper.isValidMovieWithPredictions(expectedPredictedMovies, predictedMovies),
+            assertTrue(predictionDAOOracle.isValidMovieWithPredictions(expectedPredictedMovies, predictedMovies),
                     "List of Movies with Predictions must match!");
 
         } catch (Exception e) {
@@ -57,7 +57,7 @@ class PredictionDAOTest {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Helper Methods for this PredictionDAOTest class
-    private class PredictionDAOTestHelper {
+    private class PredictionDAOOracle {
 
         /**
          * @param numberOfPredictions   Number of Predictions Needed
