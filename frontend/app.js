@@ -72,6 +72,9 @@ passport.use(new LocalStrategy({
               });
 
           }
+          else { // handle wrong password & username combo
+            return done(null,false);
+          }
       }
     );
 
