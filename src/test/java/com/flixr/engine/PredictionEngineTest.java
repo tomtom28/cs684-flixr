@@ -37,7 +37,7 @@ class PredictionEngineTest {
 
         try {
             // Initialize Variables needed for Prediction Engine
-            PredictionEngineTestHelper predictionEngineTestHelper = new PredictionEngineTestHelper();
+            PredictionEngineOracle predictionEngineOracle = new PredictionEngineOracle();
             EngineDAO engineDAO = new EngineDAO();
             Collection<Integer> listOfMovieIdsNotRatedByUser = engineDAO.getMovieIdsNotRatedByUserId(userId);
             UserSubmission userSubmission = engineDAO.getUserSubmission(userId); // Full User Submission (i.e. everything they rated)
@@ -52,11 +52,11 @@ class PredictionEngineTest {
             assertEquals(numberofPredictions, predictions.size(), "Number of predictions must match requested count!");
 
             // Predictions should NOT be movies that the user already rated
-            assertTrue( predictionEngineTestHelper.doesNotContainAnyAlreadyRatedMovies(predictions, userSubmission),
+            assertTrue( predictionEngineOracle.doesNotContainAnyAlreadyRatedMovies(predictions, userSubmission),
                     "Movie Predictions cannot contain Movies that were already rated by the user!");
 
             // Predictions must be sorted in descending order
-            assertTrue(predictionEngineTestHelper.hasMovieRatingsInDescOrder(predictions), "Movie Predictions must be sorted, highest to lowest!");
+            assertTrue(predictionEngineOracle.hasMovieRatingsInDescOrder(predictions), "Movie Predictions must be sorted, highest to lowest!");
 
         } catch (DAOException e) {
             fail("DAO Exception was thrown: " + e.getMessage());
@@ -80,11 +80,11 @@ class PredictionEngineTest {
 
         try {
             // Initialize Variables needed for Prediction Engine
-            PredictionEngineTestHelper predictionEngineTestHelper = new PredictionEngineTestHelper();
+            PredictionEngineOracle predictionEngineOracle = new PredictionEngineOracle();
             EngineDAO engineDAO = new EngineDAO();
             Collection<Integer> listOfMovieIdsNotRatedByUser = engineDAO.getMovieIdsNotRatedByUserId(userId);
             UserSubmission fullUserSubmission = engineDAO.getUserSubmission(userId); // Full User Submission (i.e. everything they rated)
-            UserSubmission halfUserSubmission = predictionEngineTestHelper.getHalfUserSubmission(fullUserSubmission); // Half User Submission (i.e. half of what they rated)
+            UserSubmission halfUserSubmission = predictionEngineOracle.getHalfUserSubmission(fullUserSubmission); // Half User Submission (i.e. half of what they rated)
 
             // Initialize Prediction Engine & generate predictions
             PredictionDAO predictionDAO = new PredictionDAO();
@@ -116,7 +116,7 @@ class PredictionEngineTest {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Helper Methods for test class
-    private class PredictionEngineTestHelper {
+    private class PredictionEngineOracle {
 
         /**
          * @param fullUserSubmission    Full UserSubmission (i.e. everything they rated)

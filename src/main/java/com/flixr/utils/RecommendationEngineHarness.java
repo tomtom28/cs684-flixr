@@ -1,6 +1,7 @@
 package com.flixr.utils;
 
 import com.flixr.beans.UserSubmission;
+import com.flixr.exceptions.EngineException;
 import com.flixr.threads.RecEngineThread;
 
 import java.io.BufferedReader;
@@ -30,7 +31,7 @@ public class RecommendationEngineHarness {
     }
 
     // Reads file, assuming it is in CSV format
-    private void readInputFile(String inputFilePath) {
+    public void readInputFile(String inputFilePath) throws EngineException {
         String line = null;
         BufferedReader bufferedReader = null;
         try {
@@ -54,16 +55,18 @@ public class RecommendationEngineHarness {
         } catch (IOException e) {
             System.out.println("Unable to read input file: \n" + inputFilePath);
             e.printStackTrace();
+            throw new EngineException(e);
         } catch (NumberFormatException e) {
             System.out.println("Unable to parse the following line: \n" + line);
             e.printStackTrace();
+            throw new EngineException(e);
         }
     }
 
 
     // Maps all UserIds to submitted (Movie, Rating) pairs
     // NOTE: recEngineInputs must be sorted by UserId
-    private void processRating(int userId, int movieId, double rating) {
+    public void processRating(int userId, int movieId, double rating) {
 
         // Determine current User Submission
         UserSubmission userSubmission;
@@ -80,7 +83,7 @@ public class RecommendationEngineHarness {
     }
 
     // Trains the model (and saves to CSV)
-    private void trainModel(String outputFilePrefix) {
+    public void trainModel(String outputFilePrefix) {
         // Split Up List of MovieIds
         int[] splitIndxs = getMatrixSplitPoints(this.sortedListOfAllMovieIds);
         List<Integer> listOfDistinctMovieIds = new ArrayList<>(this.sortedListOfAllMovieIds);
@@ -127,29 +130,6 @@ public class RecommendationEngineHarness {
         splitIndxs[splitIndxs.length - 1] = sortedListOfMovieIds.size(); // any remainders will just get tacked on to the last thread
 
         return splitIndxs;
-    }
-
-    // Creates an RecommendationEngineHarness for Standalone model training
-    public static void main(String[] args) {
-
-        // Select Training File Name & CSV or DB Test
-        String ratingFileName = "ml-small-ratings";
-
-        // Selects a Input/Output CSV Files
-        String pathName = System.getProperty("user.dir");
-        String inputFile = "/test_data/" + ratingFileName + ".csv";
-        String outputFilePrefix = "/test_data/outputs/models/model-" + ratingFileName;
-
-        // Create Engine Harness (which generates input objects)
-        RecommendationEngineHarness recommendationEngineHarness = new RecommendationEngineHarness();
-        recommendationEngineHarness.readInputFile(pathName + inputFile);
-
-        // Train Model using Multi Threading for faster run time
-        long startTime = System.currentTimeMillis();
-        recommendationEngineHarness.trainModel(pathName + outputFilePrefix);
-        long endTime = System.currentTimeMillis();
-        System.out.println("\nTotal Run Time: " + (endTime - startTime) + " ms.");
-
     }
 
 }

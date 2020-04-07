@@ -38,22 +38,22 @@ public class EngineDAOTest {
             UserSubmission userSubmission = engineDAO.getUserSubmission(userId);
 
             // Initialize Helper Class
-            EngineDAOTestHelper engineDAOTestHelper = new EngineDAOTestHelper();
+            EngineDAOTestOracle engineDAOTestOracle = new EngineDAOTestOracle();
 
             // Total Number of rated movies in UserSubmission should match database
-            int expectedNumberOfRatings = engineDAOTestHelper.getTotalNumberOfMoviesRatedByUserId(userId);
+            int expectedNumberOfRatings = engineDAOTestOracle.getTotalNumberOfMoviesRatedByUserId(userId);
             assertEquals(expectedNumberOfRatings, userSubmission.getMoviesViewed().size(), "Total Count of Movies Rated should match!");
 
             // Only Movies rated by the user should appear in the UserSubmission
-            List<Integer> expectedListOfAllMovieIdsNotRatedByUserId = engineDAOTestHelper.getListOfAllMovieIdsNotRatedByUserId(userId);
-            assertTrue(engineDAOTestHelper.listDoesNotContainAnyMatchingMovieIds(userSubmission, expectedListOfAllMovieIdsNotRatedByUserId),
+            List<Integer> expectedListOfAllMovieIdsNotRatedByUserId = engineDAOTestOracle.getListOfAllMovieIdsNotRatedByUserId(userId);
+            assertTrue(engineDAOTestOracle.listDoesNotContainAnyMatchingMovieIds(userSubmission, expectedListOfAllMovieIdsNotRatedByUserId),
                     "UserSubmission contained a movieId that was not rated by the user!");
 
             // Spot Check one of the MovieId Ratings to ensure it matches database
             Random random = new Random();
             int randomMovieIndex = random.nextInt(expectedNumberOfRatings); // from 0 to (# ratings - 1)
             int randomMovieId = userSubmission.getMoviesViewed().get(randomMovieIndex);
-            double expectedMovieRating = engineDAOTestHelper.getRatingForMovieId(userId, randomMovieId);
+            double expectedMovieRating = engineDAOTestOracle.getRatingForMovieId(userId, randomMovieId);
             assertEquals(expectedMovieRating, userSubmission.getMovieRating(randomMovieId),
                     "UserSubmission rating did not match the rating in the database!");
 
@@ -81,8 +81,8 @@ public class EngineDAOTest {
             Collection<Integer> movieIdsNotRatedByUser = engineDAO.getMovieIdsNotRatedByUserId(userId);
 
             // Only Movies rated by the user should appear in the UserSubmission
-            EngineDAOTestHelper engineDAOTestHelper = new EngineDAOTestHelper();
-            Collection<Integer> expectedListOfAllMovieIdsNotRatedByUserId = engineDAOTestHelper.getListOfAllMovieIdsNotRatedByUserId(userId);
+            EngineDAOTestOracle engineDAOTestOracle = new EngineDAOTestOracle();
+            Collection<Integer> expectedListOfAllMovieIdsNotRatedByUserId = engineDAOTestOracle.getListOfAllMovieIdsNotRatedByUserId(userId);
             if (expectedListOfAllMovieIdsNotRatedByUserId == null) throw new Exception("EngineDAOTestHelper passed null list!");
             assertTrue(movieIdsNotRatedByUser.containsAll(expectedListOfAllMovieIdsNotRatedByUserId),
                     "List of MovieIds NOT Rated By User contained a movieId that WAS rated by User!");
@@ -101,7 +101,7 @@ public class EngineDAOTest {
 
 
     // Helper Methods for EngineDAOTest
-    private class EngineDAOTestHelper {
+    private class EngineDAOTestOracle {
 
         /**
          * @param userId    User Id
