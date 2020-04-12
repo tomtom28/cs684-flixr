@@ -288,7 +288,7 @@ public class ApplicationController {
 
 			// Save to Database
 			MovieDAO movieDAO = new MovieDAO();
-			movieDAO.saveMove(movie);
+			movieDAO.saveMovie(movie);
 
 			System.out.println("MovieName: " + movie.getMoviename() + " added!");
 			return "New Movie Added Successfully!";
