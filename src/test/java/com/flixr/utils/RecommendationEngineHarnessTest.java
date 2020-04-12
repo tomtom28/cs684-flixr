@@ -57,7 +57,7 @@ class RecommendationEngineHarnessTest {
             System.out.println("\nTotal Run Time: " + (endTime - startTime)/1000.0 + " seconds.");
 
             // Load Trained Model (i.e. Correlation Matrix)
-            recEngineHarnessTestOracle.loadDefaultCorrelationMatrix();
+            recEngineHarnessTestOracle.loadCorrelationMatrix();
 
             // Step 1 - Test N number of random positions along matrix diagonal
             System.out.println("Confirming Matrix Diagonals...");
@@ -145,7 +145,7 @@ class RecommendationEngineHarnessTest {
          * @return  Returns the Correlation Matrix from the ml-model outputs
          * @throws EngineException
          */
-        public void loadDefaultCorrelationMatrix() throws EngineException {
+        public void loadCorrelationMatrix() throws EngineException {
 
             // Determine Unique # of Movies
             System.out.println("Determining Correlation Matrix Size... ");
