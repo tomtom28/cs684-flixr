@@ -9,6 +9,7 @@ import com.flixr.exceptions.DAOException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.flixr.configuration.ApplicationConstants.*;
 
@@ -93,6 +94,44 @@ public class MovieDAO {
 
         catch (SQLException e)
         {
+            throw new DAOException(e);
+        }
+    }
+
+
+    /**
+     * Added by Thomas Thompson
+     * @param movieNameToMatch  Movie Name (Or part of movie name) to be matched
+     * @return  Index of Movie in Total Movie List
+     */
+    public int getMovieIndexByMatchingName(String movieNameToMatch) throws DAOException {
+
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            String query = "SELECT * FROM movies WHERE MovieName LIKE ? LIMIT 1";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, "%" + movieNameToMatch + "%"); // Wildcard Match left & right
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Get closest movie name match
+            resultSet.next();
+            String matchedMovieName = resultSet.getString("movieName");
+
+            // Find all Movies
+            ArrayList<Movie> allMovies = this.getAllMovies();
+
+            // Iterate over all movies to get index of match
+            for (int i = 0; i < allMovies.size(); i++) {
+                if (allMovies.get(i).getMoviename().equalsIgnoreCase(matchedMovieName)) {
+                    return i;
+                }
+            }
+
+            // Unable to find a match, so reset back to 0
+            return 0;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } catch (NullPointerException e) {
             throw new DAOException(e);
         }
     }

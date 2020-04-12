@@ -305,4 +305,32 @@ public class ApplicationController {
 
 	}
 
+
+	@PostMapping("/nextorate")
+	@ResponseBody
+	public HashMap<String, String> getIndexOfSearchedMovieName(@RequestParam(value="user_email") String email,
+							  @RequestParam(value="movie_rate_count") int movieRateCount,
+							  @RequestParam(value="movie_name") String movieName) throws ApiException {
+		try {
+			// Query MovieDAO
+			MovieDAO movieDAO = new MovieDAO();
+			int movieIndex = movieDAO.getMovieIndexByMatchingName(movieName);
+
+			// Send Back Response
+			HashMap<String, String> response = new HashMap<>();
+			response.put("user_email", email);
+			response.put("movie_rate_count", "" + movieIndex);
+			response.put("movie_name", movieName);
+			return response;
+
+		} catch (DAOException e) {
+			String msg = "Unable to Find a Match for " + movieName + ": " + e.getMessage();
+			System.out.println(msg);
+			throw new ApiException();
+		}
+
+	}
+
+
+
 }
