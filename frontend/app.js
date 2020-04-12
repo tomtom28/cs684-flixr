@@ -369,11 +369,15 @@ app.post("/rating/search/movie",function(req,res){
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log(body);
+            var parsedBody = JSON.parse(body);
+            console.log("Matching Movie Index Found: " + parsedBody.movie_rate_count);
+            req.user.movie_rate_count = parsedBody.movie_rate_count - 1;
         }
+        console.log(obj);
+        res.redirect("/rating/next");
     }
   );
-  console.log(obj);
-  res.redirect("/rating/next");
+
 });
 
 app.listen(process.env.PORT||3000, function() {
