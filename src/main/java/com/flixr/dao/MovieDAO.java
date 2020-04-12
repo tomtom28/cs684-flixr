@@ -30,16 +30,8 @@ public class MovieDAO {
             // Iterate over ResultSet to create list of MovieIds
             ArrayList<Movie> allMovies = new ArrayList<Movie>(); //create new Arraylist to send a list of all movie object
 
-
             //do git pull later for movie stuff in beans
             //look at what's in the movie object and pull whatever it is asking for
-
-            //no clue what this while loop is for
-            /*while (resultSet.next()) {
-                int movieId = resultSet.getInt("imdbId");
-                AllMovies.add(movieId);
-
-            }*/
 
             //making my own while loop to get the stuff from the DB
             while (resultSet.next())
@@ -73,7 +65,59 @@ public class MovieDAO {
         }
     }
 
-    public void saveMove(Movie movie) throws DAOException //method puts all movies into getters
+    public ArrayList <Movie> getUnderageMoviesOnly() throws DAOException //return all movies
+    {
+        //query database and get all movies
+        //iterate over results set
+
+        try {
+            String query = "SELECT * FROM movies WHERE AgeRating NOT IN" +
+                    "(UNRATED, Not Rated, R, M, M/PG, X, TV-MA) ORDER BY MovieId DESC";
+
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Iterate over ResultSet to create list of MovieIds
+            ArrayList<Movie> allMovies = new ArrayList<Movie>(); //create new Arraylist to send a list of all movie object
+
+            //do git pull later for movie stuff in beans
+            //look at what's in the movie object and pull whatever it is asking for
+
+            //making my own while loop to get the stuff from the DB
+            while (resultSet.next())
+            {
+                // Make the Movie Bean
+                Movie movie = new Movie();
+                movie.setMovieID(resultSet.getInt("movieID"));
+                movie.setMoviename(resultSet.getString("movieName"));
+                movie.setReleasedate(resultSet.getString("releaseDate"));
+                movie.setAgerating(resultSet.getString("ageRating"));
+                movie.setActors(resultSet.getString("actors"));
+                movie.setRuntime(resultSet.getInt("runtime"));
+                movie.setDirector(resultSet.getString("director"));
+                movie.setWriter(resultSet.getString("writer"));
+                movie.setMoviePosterURL(resultSet.getString("posterURL"));
+
+                // Add the Movie Bean to the List
+                allMovies.add(movie);
+            }
+
+
+            // Close connection and return
+            conn.close();
+            return allMovies;
+
+        }
+
+        catch (SQLException e)
+        {
+            throw new DAOException(e);
+        }
+    }
+
+    public void saveMovie(Movie movie) throws DAOException //method puts all movies into getters
     {
         try {
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
