@@ -218,6 +218,26 @@ public class PredictionDAO implements IPredictionDAO {
     }
 
 
+    public List<MovieWithPrediction> getPredictedMoviesForUnderAgedUser(List<Prediction> predictions, int numberOfMovies) throws DAOException {
+
+        // Filter out Movies by Rating
+        List<MovieWithPrediction> filteredListOfMoviesWithPredictions = new ArrayList<>();
+        List<MovieWithPrediction> allMoviesWithPredictions = this.getPredictedMovies(predictions);
+        for(MovieWithPrediction movieWithPrediction : allMoviesWithPredictions) {
+            // Check if ratings is valid (i.e. not in restricted list)
+            String ageRating = movieWithPrediction.getAgerating();
+            if (!RATINGS_NOT_FOR_UNDER_18_YEARS_OLD.contains(ageRating)) {
+                filteredListOfMoviesWithPredictions.add(movieWithPrediction);
+            }
+            // Break Loop is # of desired recs are reach
+            if (filteredListOfMoviesWithPredictions.size() >= numberOfMovies) {
+                break;
+            }
+        }
+        return filteredListOfMoviesWithPredictions;
+    }
+
+
     private void generateMatrixModelFromCSV() throws DAOException {
         // Track Progress
         System.out.println("Loading Correlation Matrix... ");

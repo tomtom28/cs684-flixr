@@ -25,4 +25,7 @@ public class ApplicationConstants {
 
     // Max Admin Page Limit
     public static final int MAX_ADMIN_LIMIT = 50;
+
+    // Age Restriction Settings, movie ratings not allowed for under 18
+    public static final String RATINGS_NOT_FOR_UNDER_18_YEARS_OLD = "'NC-17', 'N/A', 'UNRATED', 'Not Rated', 'R', 'M', 'M/PG', 'X', 'TV-MA'";
 }

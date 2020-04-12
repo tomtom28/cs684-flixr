@@ -1,7 +1,6 @@
 package com.flixr.application;
 
 import org.junit.jupiter.api.Test;
-import org.testng.annotations.AfterTest;
 
 import java.sql.*;
 

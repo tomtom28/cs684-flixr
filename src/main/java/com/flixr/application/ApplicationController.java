@@ -132,15 +132,27 @@ public class ApplicationController {
 	}
 
 
-	@GetMapping("/rating/{user_email}/{index}")
+	@GetMapping("/rating/{user_id}/{index}")
 	@ResponseBody
-	public Movie getNextMovieToRate(@PathVariable(value="user_email") String userEmail,
+	public Movie getNextMovieToRate(@PathVariable(value="user_id") int userId,
 									@PathVariable(value="index") int movieIndex) {
 
 		try {
+
+			// Check is user is underage
+			UserDAO userDAO = new UserDAO();
+			boolean isUnderAgedUser = userDAO.isUnderAgedUser(userId);
+
 			// Select Movie by index
+			List<Movie> allMovies;
 			MovieDAO movieDAO = new MovieDAO();
-			List<Movie> allMovies = movieDAO.getAllMovies();
+			if (isUnderAgedUser) {
+				allMovies = movieDAO.getUnderageMoviesOnly();
+			}
+			else {
+				allMovies = movieDAO.getAllMovies();
+			}
+
 			Movie nextMovie = allMovies.get(movieIndex);
 			return nextMovie;
 		} catch (DAOException e) {
@@ -312,9 +324,20 @@ public class ApplicationController {
 							  @RequestParam(value="movie_rate_count") int movieRateCount,
 							  @RequestParam(value="movie_name") String movieName) throws ApiException {
 		try {
+			// Check is user is underage
+			UserDAO userDAO = new UserDAO();
+			boolean isUnderAgedUser = userDAO.isUnderAgedUser(email);
+
 			// Query MovieDAO
+			int movieIndex;
 			MovieDAO movieDAO = new MovieDAO();
-			int movieIndex = movieDAO.getMovieIndexByMatchingName(movieName);
+			if (isUnderAgedUser) {
+				movieIndex = movieDAO.getMovieIndexByMatchingNameUnderageMoviesOnly(movieName);
+			}
+			else {
+				movieIndex = movieDAO.getMovieIndexByMatchingName(movieName);
+			}
+
 
 			// Send Back Response
 			HashMap<String, String> response = new HashMap<>();
