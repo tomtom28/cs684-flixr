@@ -72,8 +72,8 @@ public class MovieDAO {
         //iterate over results set
 
         try {
-            String query = "SELECT * FROM movies WHERE AgeRating NOT IN" +
-                    "(UNRATED, Not Rated, R, M, M/PG, X, TV-MA) ORDER BY MovieId DESC";
+            String query = "SELECT * FROM movies WHERE AgeRating NOT IN " +
+                    "(" + RATINGS_NOT_FOR_UNDER_18_YEARS_OLD + ") ORDER BY MovieId DESC";
 
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
             PreparedStatement stmt = conn.prepareStatement(query);
@@ -134,6 +134,7 @@ public class MovieDAO {
             stmt.setString(8, movie.getWriter());
             stmt.setString(9, movie.getposter_url());
             stmt.executeUpdate();
+            conn.close();
         }
 
         catch (SQLException e)
@@ -172,6 +173,45 @@ public class MovieDAO {
             }
 
             // Unable to find a match, so reset back to 0
+            conn.close();
+            return 0;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        } catch (NullPointerException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    /**
+     * Added by Thomas Thompson
+     * @param movieNameToMatch  Movie Name (Or part of movie name) to be matched
+     * @return  Index of Movie in Total Movie List
+     */
+    public int getMovieIndexByMatchingNameUnderageMoviesOnly(String movieNameToMatch) throws DAOException {
+
+        try {
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            String query = "SELECT * FROM movies WHERE MovieName LIKE ? LIMIT 1";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, "%" + movieNameToMatch + "%"); // Wildcard Match left & right
+            ResultSet resultSet = stmt.executeQuery();
+
+            // Get closest movie name match
+            resultSet.next();
+            String matchedMovieName = resultSet.getString("movieName");
+
+            // Find ONLY underaged movies
+            ArrayList<Movie> allUnderAgedMovies = this.getUnderageMoviesOnly();
+
+            // Iterate over all movies to get index of match
+            for (int i = 0; i < allUnderAgedMovies.size(); i++) {
+                if (allUnderAgedMovies.get(i).getMoviename().equalsIgnoreCase(matchedMovieName)) {
+                    return i;
+                }
+            }
+
+            // Unable to find a match, so reset back to 0
+            conn.close();
             return 0;
         } catch (SQLException e) {
             throw new DAOException(e);

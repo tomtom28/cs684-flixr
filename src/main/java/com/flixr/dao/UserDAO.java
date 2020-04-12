@@ -195,4 +195,69 @@ public class UserDAO {
         }
     }
 
+    /**
+     * Added by Thomas Thompson
+     * Checks is user in under Age of 18
+     * @param userEmail
+     * @return Returns true if user is under-aged (ie under 18)
+     */
+    public boolean isUnderAgedUser(String userEmail) throws DAOException {
+        try {
+            // Get the User's age
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT Age FROM users WHERE EmailAddress = ?");
+            stmt.setString(1, userEmail);
+            ResultSet resultSet = stmt.executeQuery();
+            resultSet.next();
+            int userAge = resultSet.getInt("Age");
+
+            // Close connection
+            conn.close();
+
+            // Check if the user's age is under 18
+            return (userAge < 18);
+
+        } catch (SQLException e) {
+            System.out.println("Query Failed: " + e.getMessage());
+            throw new DAOException(e);
+        }
+        catch (NullPointerException e) { // Thrown if invalid user email
+            System.out.println("Query Failed: " + e.getMessage());
+            throw new DAOException(e);
+        }
+    }
+
+    /**
+     * Added by Thomas Thompson
+     * Checks is user in under Age of 18
+     * @param userId
+     * @return Returns true if user is under-aged (ie under 18)
+     */
+    public boolean isUnderAgedUser(int userId) throws DAOException {
+        try {
+            // Get the User's age
+            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt = conn.prepareStatement("SELECT Age FROM users WHERE UserID = ?");
+            stmt.setInt(1, userId);
+            ResultSet resultSet = stmt.executeQuery();
+            resultSet.next();
+            int userAge = resultSet.getInt("Age");
+
+            // Close connection
+            conn.close();
+
+            // Check if the user's age is under 18
+            return (userAge < 18);
+
+        } catch (SQLException e) {
+            System.out.println("Query Failed: " + e.getMessage());
+            throw new DAOException(e);
+        }
+        catch (NullPointerException e) { // Thrown if invalid user email
+            System.out.println("Query Failed: " + e.getMessage());
+            throw new DAOException(e);
+        }
+    }
+
+
 }

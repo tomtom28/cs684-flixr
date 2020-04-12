@@ -5,6 +5,7 @@ import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.UserSubmission;
 import com.flixr.dao.EngineDAO;
 import com.flixr.dao.PredictionDAO;
+import com.flixr.dao.UserDAO;
 import com.flixr.engine.PredictionEngine;
 import com.flixr.beans.Prediction;
 import com.flixr.exceptions.DAOException;
@@ -52,11 +53,23 @@ public class RecommendationController {
         PredictionEngine predictionEngine = new PredictionEngine(userSubmission, movieIdsNotRatedByUser, predictionDAO);
         predictionEngine.generatePredictions();
 
-        // Get Top "X" movie predictions
-        List<Prediction> predictions = predictionEngine.getTopXMoviePredictions(numberOfMoviePredictions);
+        // Check if user is underAged
+        UserDAO userDAO = new UserDAO();
+        boolean isUnderAgedUser = userDAO.isUnderAgedUser(userId);
 
-        // Iterate over predictions to create MoviePredictions
-        List<MovieWithPrediction> predictedMovies = predictionDAO.getPredictedMovies(predictions);
+        // Determine Movie Predictions (with Age Restriction logic)
+        List<MovieWithPrediction> predictedMovies;
+        if (isUnderAgedUser) {
+            // Get All Movie Predictions
+            List<Prediction> predictions = predictionEngine.getAllMoviePredictions();
+            predictedMovies = predictionDAO.getPredictedMoviesForUnderAgedUser(predictions, numberOfMoviePredictions);
+        }
+        else {
+            // Get Top "X" movie predictions
+            List<Prediction> predictions = predictionEngine.getTopXMoviePredictions(numberOfMoviePredictions);
+            // Iterate over predictions to create MoviePredictions
+            predictedMovies = predictionDAO.getPredictedMovies(predictions);
+        }
 
         return predictedMovies;
     }
