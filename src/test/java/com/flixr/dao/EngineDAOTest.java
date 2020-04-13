@@ -22,8 +22,15 @@ public class EngineDAOTest {
     private static int TEST_USER_ID = 1;
 
     /**
-     * TT: Unit Test # 4
+     * Thomas Thompson, Test # 5
+     * Test Name: Unit-5
+     *
      * Ensure that the "User Submission" (i.e. the movies that a given user rated) are correctly generated for a valid UserId
+     * This can also serve as an integration test
+     *
+     * Criteria:
+     * 1) All MovieIds in UserSubmission that must be rated by the selected user
+     * 2) Movie Rating in UserSubmission must match database entry
      */
     @Test
     void testGetUserSubmission() {
@@ -66,7 +73,9 @@ public class EngineDAOTest {
 
 
     /**
-     * TT: Unit Test # 5
+     * Thomas Thompson, Test # 6
+     * Test Name: Unit-6
+     *
      * Ensure that all "Movies NOT Rated By User" are accurate for a valid UserId
      */
     @Test

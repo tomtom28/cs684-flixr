@@ -23,9 +23,12 @@ class PredictionDAOTest {
     private static int NUM_OF_MOVIE_PREDICIONS = 10;
 
     /**
-     * TT: Unit Test # 6
+     * Thomas Thompson, Test # 10
+     * Test Name: Unit-10
+     *
      * This test is meant to ensure the list of Predictions is properly converted into a list of MoviesWithPredictions
      * Note that Predictions are randomly generated.
+     * This can also serve as an integration test
      */
     @Test
     void testGetPredictedMovies() {

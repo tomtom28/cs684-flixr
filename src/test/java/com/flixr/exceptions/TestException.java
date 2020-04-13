@@ -6,6 +6,10 @@ package com.flixr.exceptions;
  */
 public class TestException extends Exception {
     private boolean isSkippedTest;
+    public TestException (Exception e) {
+        super(e);
+        this.isSkippedTest = false;
+    }
     public TestException (Exception e, boolean skipTest) {
         super(e);
         this.isSkippedTest = skipTest;

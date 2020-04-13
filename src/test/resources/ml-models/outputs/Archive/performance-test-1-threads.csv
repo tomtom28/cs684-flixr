@@ -1,0 +1,6 @@
+FileName, ActualRunTime (sec), NumberOfMovies, NumberOfUsers, NumberOfRatings, n^2*m, TheoreticalRunTime (sec), Normalization Factor = 4708285.390151954
+ml-ratings-u5, 0.517, 481.0, 5.0, 560.0, 1156805.0, 0.24569559917069206
+ml-ratings-u10, 2.206, 971.0, 10.0, 1259.0, 9428410.0, 2.002514550141938
+ml-ratings-u25, 23.708, 2139.0, 25.0, 4038.0, 1.14383025E8, 24.2939871995118
+ml-ratings-u50, 82.12, 2892.0, 50.0, 7422.0, 4.181832E8, 88.81857520249078
+ml-ratings-u100, 371.099, 4180.0, 100.0, 15448.0, 1.74724E9, 371.099
