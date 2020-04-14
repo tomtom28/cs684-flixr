@@ -23,14 +23,14 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
-  `UserID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL AUTO_INCREMENT,
   `FullName` varchar(255) DEFAULT NULL,
   `UserPassword` varchar(255) DEFAULT NULL,
-  `EmailAddress` varchar(255) DEFAULT NULL,
+  `EmailAddress` varchar(255) NOT NULL,
   `Age` int(11) DEFAULT NULL,
   `Country` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`UserID`,`EmailAddress`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'John Smith','password','jsmith@email.com',21,'USA'),(2,'Bruce Wayne','notbatman','actuallybatman@gmail.com',31,'USA'),(3,'Doom Slayer','ripandtear','killalldemons@gmail.com',27,'USA');
+INSERT INTO `users` VALUES (0,'Admin User','admin','admin@flixr.com',99,'USA'),(1,'John Smith','password','jsmith@email.com',21,'USA'),(2,'Bruce Wayne','notbatman','actuallybatman@gmail.com',31,'USA'),(3,'Doom Slayer','ripandtear','killalldemons@gmail.com',27,'USA'),(4,'Young Kid','password','kid@email.com',13,'USA');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -52,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-22 19:27:25
+-- Dump completed on 2020-04-14 18:49:35
