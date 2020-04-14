@@ -26,8 +26,15 @@ class PredictionEngineTest {
     private static int NUM_OF_MOVIE_PREDICIONS = 10;
 
     /**
-     * TT: Integration Test # 1
+     * Thomas Thompson, Test # 11
+     * Test Name: Unit-11
+     *
      * This test is meant to ensure that the PredictionEngine and its DAOs are properly aligned
+     * This can also serve as an integration test
+     *
+     * Expectations:
+     * 1) Number of Predictions must match requested count
+     * 2) Movie Predictions must be sorted, highest to lowest
      */
     @Test
     void testGetTopXMoviePredictions() {
@@ -68,80 +75,10 @@ class PredictionEngineTest {
     }
 
 
-    /**
-     * TT: Unit Test # 7
-     * This test is meant to ensure the accuracy of the PredictionEngine results
-     */
-    @Test
-    void testAccuracyOfTopXMoviePredictions() {
-
-        int userId = TEST_USER_ID;
-        int numberofPredictions = NUM_OF_MOVIE_PREDICIONS;
-
-        try {
-            // Initialize Variables needed for Prediction Engine
-            PredictionEngineOracle predictionEngineOracle = new PredictionEngineOracle();
-            EngineDAO engineDAO = new EngineDAO();
-            Collection<Integer> listOfMovieIdsNotRatedByUser = engineDAO.getMovieIdsNotRatedByUserId(userId);
-            UserSubmission fullUserSubmission = engineDAO.getUserSubmission(userId); // Full User Submission (i.e. everything they rated)
-            UserSubmission halfUserSubmission = predictionEngineOracle.getHalfUserSubmission(fullUserSubmission); // Half User Submission (i.e. half of what they rated)
-
-            // Initialize Prediction Engine & generate predictions
-            PredictionDAO predictionDAO = new PredictionDAO();
-            PredictionEngine predictionEngine = new PredictionEngine(fullUserSubmission, listOfMovieIdsNotRatedByUser, predictionDAO);
-            predictionEngine.generatePredictions();
-            List<Prediction> predictions = predictionEngine.getTopXMoviePredictions(numberofPredictions);
-
-            // TODO: gauge accuracy of the prediction
-            // compare fullUserSubmission with halfUserSubmission using RMS or something else?
-
-
-        } catch (DAOException e) {
-            fail("DAO Exception was thrown: " + e.getMessage());
-        } catch (EngineException e) {
-            fail("Engine Exception was thrown: " + e.getMessage());
-        } catch (TestException e) {
-            if (e.isSkippedTest()) {
-                System.out.println("Unable to test with even parameters. Test is skipped.");
-            } else {
-                fail("Unable to perform test!");
-            }
-        }
-
-
-    }
-
-
-
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Helper Methods for test class
+    // Test Oracle
     private class PredictionEngineOracle {
-
-        /**
-         * @param fullUserSubmission    Full UserSubmission (i.e. everything they rated)
-         * @return  Returns a Half User Submission (i.e. first half of what they rated)
-         * @throws TestException
-         */
-        private UserSubmission getHalfUserSubmission(UserSubmission fullUserSubmission) throws TestException {
-
-            UserSubmission halfUserSubmission = new UserSubmission(fullUserSubmission.getUserId());
-
-            // User must have at least rated 2 movies
-            if (fullUserSubmission.getMoviesViewed().size() < 2) {
-                throw new TestException(new Exception("User Rated too few movies, cannot proceed with test!"), true);
-            }
-
-            // Split full submission in half
-            int halfOfRatings = (int) fullUserSubmission.getMoviesViewed().size() / 2;
-            for (int i = 0; i < halfOfRatings; i++) {
-                int movieId = fullUserSubmission.getMoviesViewed().get(i);
-                double rating = fullUserSubmission.getMovieRating(movieId);
-                halfUserSubmission.addMovieRating(movieId, rating);
-            }
-
-            return halfUserSubmission;
-        }
 
         /**
          * @param predictions       List of Predictions for a given user
