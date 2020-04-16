@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *  Used to launch a Stand Alone version of the PredictionEngine
  *  Purpose is for backend testing / development
  */
-class PredictionEngineTestHarness {
+public class PredictionEngineTestHarness {
 
     private PredictionEngineHarnessTestDriver predictionEngineHarnessTestDriver;
     private PredictionEngineHarnessTestOracle predictionEngineHarnessTestOracle;
@@ -135,7 +135,7 @@ class PredictionEngineTestHarness {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Test Driver
-    private class PredictionEngineHarnessTestDriver implements IPredictionDAO {
+    class PredictionEngineHarnessTestDriver implements IPredictionDAO {
 
         // I/O paths
         private String projectPath;
@@ -164,7 +164,7 @@ class PredictionEngineTestHarness {
 
             // Input CSV File Names
             correlationMatrixFilePrefix = "/src/main/resources/ml-models/model"; // uses the production-grade matrix
-            userSubmissionFilePath = "/src/test/resources/ml-models/inputs/";
+            userSubmissionFilePath = "/src/test/resources/predictions/inputs/"; // uses test file archive
             predictionFilePrefix = "/src/test/resources/predictions/outputs/predict-user-";
             meanSquareOutputFilePath = "/src/test/resources/predictions/outputs/prediction-rmse-test.csv";
             // .........................................................................................................
@@ -193,8 +193,8 @@ class PredictionEngineTestHarness {
                 return correlationMatrix[i][j];
 
             } catch (IndexOutOfBoundsException | NullPointerException e) {
-                System.out.println("Unable to find entry i=" + movieId_i +", j=" +movieId_j);
-                System.out.println("Assuming correlation to be 0.");
+//                System.out.println("Unable to find entry i=" + movieId_i +", j=" +movieId_j);
+//                System.out.println("Assuming correlation to be 0.");
                 return 0;
             }
 
@@ -433,7 +433,7 @@ class PredictionEngineTestHarness {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Test Oracle
-    private class PredictionEngineHarnessTestOracle {
+    class PredictionEngineHarnessTestOracle {
 
         // I/O Variables
         private String meanSquareOutputFullFilePath;
