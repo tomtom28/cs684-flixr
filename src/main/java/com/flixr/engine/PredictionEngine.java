@@ -45,6 +45,11 @@ public class PredictionEngine {
 
     public void generatePredictions() throws EngineException {
 
+        // Check if UserSubmission is empty
+        if (userSubmission.getMoviesViewed().size() == 0) {
+            throw new EngineException( new Exception("User" + userSubmission.getUserId() + " has not rated any movies yet!"));
+        }
+
         // For every item i the user u expresses no preference for:
         for (int movieIdNotRated : movieIdsNotRatedByUser) {
 
