@@ -6,6 +6,6 @@ We will be using the production Correlation Matrix as the trained model to test 
 /src/main/resources/ml-models/
 
 
-We will be using the user rating datasets from the RecommendationEngine testing:
+We will be using the user rating datasets this directory:
 
-/src/test/resources/ml-models/inputs/
+/src/test/resources/predictions/inputs/

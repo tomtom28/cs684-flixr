@@ -2,8 +2,10 @@ package com.flixr.utils;
 
 import com.flixr.beans.Prediction;
 import com.flixr.beans.UserSubmission;
+import com.flixr.engine.PredictionEngine;
 import com.flixr.exceptions.EngineException;
 import com.flixr.exceptions.TestException;
+import com.flixr.interfaces.IPredictionDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +22,19 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Thomas Thompson
  * Testing of the PredictionEngine as a StandAlone Sub-System
+ *
+ *  Used to launch a Stand Alone version of the PredictionEngine
+ *  Purpose is for backend testing / development
  */
-class PredictionEngineHarnessTest {
+public class PredictionEngineTestHarness {
 
+    private PredictionEngineHarnessTestDriver predictionEngineHarnessTestDriver;
     private PredictionEngineHarnessTestOracle predictionEngineHarnessTestOracle;
 
     // Create a new Oracle for Standalone testing
     @BeforeEach
     public void initEach() {
+        predictionEngineHarnessTestDriver = new PredictionEngineHarnessTestDriver();
         predictionEngineHarnessTestOracle = new PredictionEngineHarnessTestOracle();
     }
 
@@ -45,33 +52,27 @@ class PredictionEngineHarnessTest {
         try {
 
             // Load Correlation Matrix
-            predictionEngineHarnessTestOracle.loadCorrelationMatrix();
+            predictionEngineHarnessTestDriver.loadCorrelationMatrix();
 
-            // Iterate over all UserIds
-            for (int userId : predictionEngineHarnessTestOracle.getListOfUserIdsToTest()) {
+            // Iterate over all UserIds in Test Driver
+            for (int userId : predictionEngineHarnessTestDriver.getListOfUserIdsToTest()) {
 
                 // Generate User Submission for given UserId
-                UserSubmission userSubmission = predictionEngineHarnessTestOracle.generateFullUserSubmission(userId);
-                Set<Integer> movieIdsNotViewedByUserId = predictionEngineHarnessTestOracle.getMovieIdsNotViewedByUserId(userSubmission);
+                UserSubmission userSubmission = predictionEngineHarnessTestDriver.generateFullUserSubmission(userId);
+                Set<Integer> movieIdsNotViewedByUserId = predictionEngineHarnessTestDriver.getMovieIdsNotViewedByUserId(userSubmission);
 
-                // Create PredictionEngine Harness
-                PredictionEngineHarness predictionEngineHarness = new PredictionEngineHarness(
-                        userSubmission,
-                        movieIdsNotViewedByUserId,
-                        predictionEngineHarnessTestOracle.getCorrelationMatrix(),
-                        predictionEngineHarnessTestOracle.getMovieIdToMatrixIndex()
-                );
 
                 // Generate Prediction
-                predictionEngineHarness.generatePrediction();
+                List<Prediction> listOfPredictions = predictionEngineHarnessTestDriver.generatePrediction(userSubmission, movieIdsNotViewedByUserId);
 
                 // Save All Predictions for the given UserId
-                predictionEngineHarness.savePredictionsToCSV(predictionEngineHarnessTestOracle.getFullPredictionOutputPathForGivenUserId(userId));
+                predictionEngineHarnessTestOracle.savePredictionsToCSV(listOfPredictions, predictionEngineHarnessTestDriver.getFullPredictionOutputPathForGivenUserId(userId));
             }
 
 
         } catch (Exception e) {
-            fail("Unable to complete prediction! Error was thrown: " + e.getMessage());
+            e.printStackTrace();
+            fail("Error was thrown: " + e.getMessage());
         }
     }
 
@@ -97,39 +98,29 @@ class PredictionEngineHarnessTest {
         try {
 
             // Load Correlation Matrix
-            predictionEngineHarnessTestOracle.loadCorrelationMatrix();
+            predictionEngineHarnessTestDriver.loadCorrelationMatrix();
 
-            // Iterate over all UserIds
-            for (int userId : predictionEngineHarnessTestOracle.getListOfUserIdsToTest()) {
+            // Iterate over all UserIds in Test Driver
+            for (int userId : predictionEngineHarnessTestDriver.getListOfUserIdsToTest()) {
 
                 // Generate Full User Submission for given UserId
-                UserSubmission fullUserSubmission = predictionEngineHarnessTestOracle.generateFullUserSubmission(userId);
+                UserSubmission fullUserSubmission = predictionEngineHarnessTestDriver.generateFullUserSubmission(userId);
 
                 // Split UserSubmissions into Test & Validation Portions
-                UserSubmission testHalfUserSubmission = predictionEngineHarnessTestOracle.splitUserSubmissionInHalf(fullUserSubmission).get(0); // 1st half for testing
-                UserSubmission validationHalfUserSubmission = predictionEngineHarnessTestOracle.splitUserSubmissionInHalf(fullUserSubmission).get(1); // 2nd half for validation
+                UserSubmission testHalfUserSubmission = predictionEngineHarnessTestDriver.splitUserSubmissionInHalf(fullUserSubmission, predictionEngineHarnessTestOracle).get(0); // 1st half for testing
+                UserSubmission validationHalfUserSubmission = predictionEngineHarnessTestDriver.splitUserSubmissionInHalf(fullUserSubmission, predictionEngineHarnessTestOracle).get(1); // 2nd half for validation
 
                 // List of MovieIds not rated by the user's test portion (i.e. includes validation movies)
-                Set<Integer> testListOfMovieIdsNotViewedByUserId = predictionEngineHarnessTestOracle.getMovieIdsNotViewedByUserId(testHalfUserSubmission);
-
-                // Create PredictionEngine Harness
-                PredictionEngineHarness predictionEngineHarness = new PredictionEngineHarness(
-                        testHalfUserSubmission,
-                        testListOfMovieIdsNotViewedByUserId,
-                        predictionEngineHarnessTestOracle.getCorrelationMatrix(),
-                        predictionEngineHarnessTestOracle.getMovieIdToMatrixIndex()
-                );
-
-                // Generate Prediction
-                predictionEngineHarness.generatePrediction();
+                Set<Integer> testListOfMovieIdsNotViewedByUserId = predictionEngineHarnessTestDriver.getMovieIdsNotViewedByUserId(testHalfUserSubmission);
 
                 // Compare Validation Half UserSubmission Against Predictions
-                List<Prediction> allPredictions = predictionEngineHarness.getAllPredictions();
+                List<Prediction> allPredictions = predictionEngineHarnessTestDriver.generatePrediction(testHalfUserSubmission, testListOfMovieIdsNotViewedByUserId);
                 predictionEngineHarnessTestOracle.setRootMeanSquaredError(allPredictions, validationHalfUserSubmission);
 
             }
 
             // Save & Display Test Results
+            predictionEngineHarnessTestOracle.initialize(predictionEngineHarnessTestDriver.getListOfUserIdsToTest(), predictionEngineHarnessTestDriver.getMeanSquareOutputFullFilePath());
             predictionEngineHarnessTestOracle.printRootMeanSquaredAnalysis();
 
 
@@ -143,10 +134,10 @@ class PredictionEngineHarnessTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Test Oracle
-    private class PredictionEngineHarnessTestOracle {
+    // Test Driver
+    class PredictionEngineHarnessTestDriver implements IPredictionDAO {
 
-        // I/O paths for RecommendationEngineHarness
+        // I/O paths
         private String projectPath;
         private String ratingFileName;
         private String correlationMatrixFilePrefix;
@@ -163,29 +154,20 @@ class PredictionEngineHarnessTest {
         Set<Integer> totalMovieIds;
 
 
-        // Reporting Variables
-        HashMap<Integer, Integer> userIdToCountOfTestMovieMap = new HashMap<>(); // key = userId, value = CountOfTestMovieIds
-        HashMap<Integer, Integer> userIdToCountOfValidationMovieMap = new HashMap<>(); // key = userId, value = CountOfValidationMovieIds
-        HashMap<Integer, Double> userIdToMeanSquaredErrorMap = new HashMap<>(); // key = userId, value = MeanSquaredError
+        public PredictionEngineHarnessTestDriver() {
 
-
-        public PredictionEngineHarnessTestOracle() {
-
-            // Set all Oracle Variables here:
+            // Set all Test Driver Variables here:
             // .........................................................................................................
-
             // List of CSV test files
             ratingFileName = "ml-ratings-imdb-u10"; // 10 users
             listOfUserIdsToTest = new int[] {1,2,3,4,5,6,7,8,9,10}; // list of UserIds within selected list
 
             // Input CSV File Names
-            correlationMatrixFilePrefix = "/src/main/resources/ml-models/model";
-            userSubmissionFilePath = "/src/test/resources/ml-models/inputs/";
+            correlationMatrixFilePrefix = "/src/main/resources/ml-models/model"; // uses the production-grade matrix
+            userSubmissionFilePath = "/src/test/resources/predictions/inputs/"; // uses test file archive
             predictionFilePrefix = "/src/test/resources/predictions/outputs/predict-user-";
             meanSquareOutputFilePath = "/src/test/resources/predictions/outputs/prediction-rmse-test.csv";
-
             // .........................................................................................................
-
 
             // Creates I/O paths
             projectPath = System.getProperty("user.dir");
@@ -193,6 +175,30 @@ class PredictionEngineHarnessTest {
 
         }
 
+
+        /**
+         * Helper Methods to support DAO
+         * @param movieId_i     Movie Index "i" in Matrix
+         * @param movieId_j     Movie Index "j" in Matrix
+         * @return  Preference Difference
+         */
+        public double getAveragePreferenceDifference(int movieId_i, int movieId_j) throws EngineException {
+
+            try {
+                // Convert MovieId to MatrixIndex
+                int i = movieIdToMatrixIndex.get(movieId_i);
+                int j = movieIdToMatrixIndex.get(movieId_j);
+
+                // Return Average Difference
+                return correlationMatrix[i][j];
+
+            } catch (IndexOutOfBoundsException | NullPointerException e) {
+//                System.out.println("Unable to find entry i=" + movieId_i +", j=" +movieId_j);
+//                System.out.println("Assuming correlation to be 0.");
+                return 0;
+            }
+
+        }
 
         /**
          * @return  Returns the Correlation Matrix from the ml-model inputs
@@ -342,7 +348,7 @@ class PredictionEngineHarnessTest {
          * @param userSubmission    Full UserSubmission
          * @return  List of UserSubmissions 1st Half & 2nd Half in positions 0, 1 respectively
          */
-        public List<UserSubmission> splitUserSubmissionInHalf(UserSubmission userSubmission) throws TestException {
+        public List<UserSubmission> splitUserSubmissionInHalf(UserSubmission userSubmission, PredictionEngineHarnessTestOracle predictionEngineHarnessTestOracle) throws TestException {
 
             // User must have at least rated 2 movies
             if (userSubmission.getMoviesViewed().size() < 2) {
@@ -375,11 +381,105 @@ class PredictionEngineHarnessTest {
             splitUserSubmissions.add(secondHalfUserSubmission);
 
             // Store to Test Oracle
-            userIdToCountOfTestMovieMap.put(userId, firstHalfUserSubmission.getMoviesViewed().size());
-            userIdToCountOfValidationMovieMap.put(userId, secondHalfUserSubmission.getMoviesViewed().size());
+            predictionEngineHarnessTestOracle.getUserIdToCountOfTestMovieMap().put(userId, firstHalfUserSubmission.getMoviesViewed().size());
+            predictionEngineHarnessTestOracle.getUserIdToCountOfValidationMovieMap().put(userId, secondHalfUserSubmission.getMoviesViewed().size());
 
             return splitUserSubmissions;
         }
+
+
+        /**
+         * Run an instance of the Prediction Engine to generate a set of movie predictions
+         * @param userSubmission
+         * @param movieIdsNotViewedByUserId
+         * @throws EngineException
+         * @return Returns a (sorted) list of movie predictions
+         */
+        public List<Prediction> generatePrediction(UserSubmission userSubmission, Set<Integer> movieIdsNotViewedByUserId) throws EngineException {
+
+            // Initialize & Run PredictionEngine
+            PredictionEngine predictionEngine = new PredictionEngine(userSubmission, movieIdsNotViewedByUserId, this);
+            predictionEngine.generatePredictions();
+
+            // Return list of predictions
+            return predictionEngine.getAllMoviePredictions();
+
+        }
+
+        public int[] getListOfUserIdsToTest() {
+            return listOfUserIdsToTest;
+        }
+
+        public double[][] getCorrelationMatrix() {
+            return correlationMatrix;
+        }
+
+        public HashMap<Integer, Integer> getMovieIdToMatrixIndex() {
+            return movieIdToMatrixIndex;
+        }
+
+        public String getFullPredictionOutputPathForGivenUserId(int userId) {
+            return projectPath + predictionFilePrefix + userId + ".csv";
+        }
+
+        public String getMeanSquareOutputFullFilePath() {
+            return projectPath + meanSquareOutputFilePath;
+        }
+
+
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Test Oracle
+    class PredictionEngineHarnessTestOracle {
+
+        // I/O Variables
+        private String meanSquareOutputFullFilePath;
+        private int[] listOfUserIdsToTest;
+
+        // Reporting Variables
+        HashMap<Integer, Integer> userIdToCountOfTestMovieMap = new HashMap<>(); // key = userId, value = CountOfTestMovieIds
+        HashMap<Integer, Integer> userIdToCountOfValidationMovieMap = new HashMap<>(); // key = userId, value = CountOfValidationMovieIds
+        HashMap<Integer, Double> userIdToMeanSquaredErrorMap = new HashMap<>(); // key = userId, value = MeanSquaredError
+
+        public PredictionEngineHarnessTestOracle() {}
+
+        public void initialize(int[] listOfUserIdsToTest, String meanSquareOutputFullFilePath) {
+            this.meanSquareOutputFullFilePath = meanSquareOutputFullFilePath;
+            this.listOfUserIdsToTest = listOfUserIdsToTest;
+        }
+
+
+        public void savePredictionsToCSV(List<Prediction> allPredictions, String predictionOutputFilePath) throws EngineException {
+
+            System.out.println("Saving Predictions to CSV... ");
+
+            PrintWriter writer = null;
+            try {
+                // Make Write & Print Header Row
+                writer = new PrintWriter(predictionOutputFilePath, "UTF-8");
+                writer.println("MovieID,PredictedRating");
+
+                // Iterate over all predictions
+                for (Prediction prediction : allPredictions) {
+                    writer.println(prediction.getMovieId() + "," + prediction.getPredictedRating());
+                }
+
+            } catch (Exception e) {
+                EngineException ee = new EngineException(e);
+                ee.setEngineMessage("Unable to Save Trained Model.");
+                throw ee;
+
+            } finally {
+                // Closes CSV output writer
+                if (writer != null) writer.close();
+            }
+
+            System.out.println("Predictions saved.");
+        }
+
 
         public void setRootMeanSquaredError(List<Prediction> listOfAllPredictions, UserSubmission validationUserSubmission) {
             // Initialize
@@ -400,6 +500,7 @@ class PredictionEngineHarnessTest {
             double rootMeanSquaredError = Math.sqrt(meanSquaredError);
             userIdToMeanSquaredErrorMap.put(userId, rootMeanSquaredError);
         }
+
 
         // Iterate over list of Predictions to find the Predicted Rating for a given MovieId
         private double getPredictedMovieRating(int movieId, List<Prediction> listOfPredictions) {
@@ -424,29 +525,13 @@ class PredictionEngineHarnessTest {
         }
 
 
-        public int[] getListOfUserIdsToTest() {
-            return listOfUserIdsToTest;
-        }
-
-        public double[][] getCorrelationMatrix() {
-            return correlationMatrix;
-        }
-
-        public HashMap<Integer, Integer> getMovieIdToMatrixIndex() {
-            return movieIdToMatrixIndex;
-        }
-
-        public String getFullPredictionOutputPathForGivenUserId(int userId) {
-            return projectPath + predictionFilePrefix + userId + ".csv";
-        }
-
         public void printRootMeanSquaredAnalysis() throws IOException {
 
             // Display MSE accuracy
             System.out.println("Root Mean Square Results...");
 
             // Make Write & Print Header Row
-            PrintWriter writer = new PrintWriter( projectPath + meanSquareOutputFilePath, "UTF-8");
+            PrintWriter writer = new PrintWriter(meanSquareOutputFullFilePath, "UTF-8");
             String csvHeaderEntry = "UserId, CountOfTestMovieIds, CountOfValidationMovieIds, RootMeanSquaredError";
             System.out.println(csvHeaderEntry);
             writer.println(csvHeaderEntry);
@@ -462,6 +547,18 @@ class PredictionEngineHarnessTest {
             // Closes CSV output writer
             writer.close();
 
+        }
+
+        public HashMap<Integer, Integer> getUserIdToCountOfTestMovieMap() {
+            return userIdToCountOfTestMovieMap;
+        }
+
+        public HashMap<Integer, Integer> getUserIdToCountOfValidationMovieMap() {
+            return userIdToCountOfValidationMovieMap;
+        }
+
+        public HashMap<Integer, Double> getUserIdToMeanSquaredErrorMap() {
+            return userIdToMeanSquaredErrorMap;
         }
 
     }
