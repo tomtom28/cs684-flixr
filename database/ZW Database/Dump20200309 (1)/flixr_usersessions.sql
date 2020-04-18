@@ -16,27 +16,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `recenginemodel`
+-- Table structure for table `usersessions`
 --
 
-DROP TABLE IF EXISTS `recenginemodel`;
+DROP TABLE IF EXISTS `usersessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `recenginemodel` (
-  `MovieIDi` int(11) NOT NULL,
-  `MovieIDj` int(11) NOT NULL,
-  `AvgDifference` double DEFAULT NULL,
-  PRIMARY KEY (`MovieIDi`,`MovieIDj`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `usersessions` (
+  `userID` int(11) NOT NULL,
+  PRIMARY KEY (`userID`),
+  CONSTRAINT `usersessions_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `recenginemodel`
+-- Dumping data for table `usersessions`
 --
 
-LOCK TABLES `recenginemodel` WRITE;
-/*!40000 ALTER TABLE `recenginemodel` DISABLE KEYS */;
-/*!40000 ALTER TABLE `recenginemodel` ENABLE KEYS */;
+LOCK TABLES `usersessions` WRITE;
+/*!40000 ALTER TABLE `usersessions` DISABLE KEYS */;
+INSERT INTO `usersessions` VALUES (0);
+/*!40000 ALTER TABLE `usersessions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
