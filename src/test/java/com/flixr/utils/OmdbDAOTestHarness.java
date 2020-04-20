@@ -131,6 +131,11 @@ class OmdbDAOTestHarness {
     }
 
 
+    /**
+     * @author Thomas Thompson
+     *
+     * Test Oracle for OmdbDAOHarness
+     */
     private class OmdbDAOHarnessTestOracle {
 
         // Instance Variables
