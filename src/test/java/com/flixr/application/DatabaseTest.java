@@ -1,5 +1,10 @@
 package com.flixr.application;
 
+/**
+ * Author: Zion Whitehall
+ * Methods to call to the Database and ensure that connections are established
+ */
+
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;
