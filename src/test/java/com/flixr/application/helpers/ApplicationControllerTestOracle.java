@@ -3,6 +3,7 @@ package com.flixr.application.helpers;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,9 +51,10 @@ public class ApplicationControllerTestOracle {
      * @author Thomas Thompson
      * Validates whether movies are sorted highest to lowest order
      *
+     * @param expectedMovie
      * @param listOfMovieWithPredictions    Test Output: User Password
      */
-    public void validateMoviePredictionsAreHighToLow(List<MovieWithPrediction> listOfMovieWithPredictions) {
+    public void validateMoviePredictionsAreHighToLow(String expectedMovie, List<MovieWithPrediction> listOfMovieWithPredictions) {
         System.out.println("\nValidating recommended movies are in highest to lowest predicted rating order...");
 
         // Iterate over all movies in the list
@@ -70,6 +72,42 @@ public class ApplicationControllerTestOracle {
 
     // TODO - Keep adding your validation methods here ...
 
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: test to see if movies are stored alphabetically
+     *
+     * @param expectedMovie
+     * @param listOfMovieWithPredictions
+     */
+    /* All this is giving issue
+    public void validateMoviePredictionsAlphabetical(String expectedMovie, List<MovieWithPrediction> listOfMovieWithPredictions)
+    {
+        System.out.println("\nValidating recommended movies are in alphabetical order...");
+        MovieWithPrediction prevMovie = listOfMovieWithPredictions.get(0); //create variable prevMovie to contain previous movie for comparison
 
+        //for loop iterates over all movies in list
+        for(MovieWithPrediction movieWithPrediction : listOfMovieWithPredictions)
+        {
+            System.out.println("Movie Name: " + movieWithPrediction.getMoviename() + ", " + "Predicted Name: "
+                    + prevMovie.getMoviename());
+
+            assertTrue(expectedMovie.equalsIgnoreCase(prevMovie.getMoviename()), "Movies are in alphabetical order"); //compares the movieWithPrediction name with the movie from the prevMovie list
+            prevMovie = movieWithPrediction.getMoviename(); //?????? Trying to get the previous movie variable to iterate
+        }
+
+    }
+*/
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: test to validate that Add Movie method from test driver ran
+     *
+     */
+    /*I was too frustrated to keep going
+    public void validateAddRating(int userID, int imdbID, double rating)
+    {
+        //dear god what am I even doing
+
+    }
+     */
 
 }

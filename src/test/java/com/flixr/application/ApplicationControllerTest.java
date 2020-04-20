@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Please see comments above code snippets for authors of each method/test
  *
  */
+
 public class ApplicationControllerTest {
 
     private ApplicationControllerTestDriver applicationControllerTestDriver;
@@ -109,6 +110,66 @@ public class ApplicationControllerTest {
 
 
     // TODO ... Keep adding Test Cases here ...
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: Select the top 25 movies
+     */
+    @Test
+    void testTop25MovieRecommendationCounts() {
+
+        // Selects known Admin user
+        String userEmail = ADMIN_EMAIL;
+        String userPassword = ADMIN_PASSWORD;
+
+        try {
+            // Login User using test driver and get back User object
+            User user = applicationControllerTestDriver.signInUser(userEmail, userPassword);
+
+            // Get list of Top 25 movies
+            List<MovieWithPrediction> movieWithPredictions = applicationControllerTestDriver.getMovieRecommendations(user.getUserID(), "top25");
+
+            // Check that we get correct number of movie recommendations
+            applicationControllerTestOracle.validateMovieCount(25, movieWithPredictions);
+
+            // Check that movies are sorted highest to lowest rating
+            applicationControllerTestOracle.validateMoviePredictionsAreHighToLow(movieWithPredictions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: Select the top 100 movies
+     */
+    @Test
+    void testTop100MovieRecommendationCounts() {
+
+        // Selects known Admin user
+        String userEmail = ADMIN_EMAIL;
+        String userPassword = ADMIN_PASSWORD;
+
+        try {
+            // Login User using test driver and get back User object
+            User user = applicationControllerTestDriver.signInUser(userEmail, userPassword);
+
+            // Get list of Top 10 movies
+            List<MovieWithPrediction> movieWithPredictions = applicationControllerTestDriver.getMovieRecommendations(user.getUserID(), "top100");
+
+            // Check that we get correct number of movie recommendations
+            applicationControllerTestOracle.validateMovieCount(100, movieWithPredictions);
+
+            // Check that movies are sorted highest to lowest rating
+            applicationControllerTestOracle.validateMoviePredictionsAreHighToLow(movieWithPredictions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
+
 
 
 }
