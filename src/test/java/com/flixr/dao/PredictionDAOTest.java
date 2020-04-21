@@ -23,8 +23,10 @@ class PredictionDAOTest {
     private static int NUM_OF_MOVIE_PREDICIONS = 10;
 
     /**
-     * Thomas Thompson, Test # 10
-     * Test Name: Unit-10
+     * @author Thomas Thompson
+     * Test ID: 10
+     * Test Type: Integration
+     * Test Name: PredictionDAOTest-1
      *
      * This test is meant to ensure the list of Predictions is properly converted into a list of MoviesWithPredictions
      * Note that Predictions are randomly generated.

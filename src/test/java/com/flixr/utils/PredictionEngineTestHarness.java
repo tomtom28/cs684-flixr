@@ -15,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Thomas Thompson
+ * Test ID: 3
+ * Test Type: Integration
+ * Test Name: PredictionEngineTestHarness-1
+ *
  * Testing of the PredictionEngine as a StandAlone Sub-System
  *
  *  Used to launch a Stand Alone version of the PredictionEngine
@@ -33,8 +37,10 @@ public class PredictionEngineTestHarness {
     }
 
     /**
-     * Thomas Thompson, Test # 3
-     * Test Name: Unit-3
+     * @author Thomas Thompson
+     * Test ID: 3
+     * Test Type: Integration
+     * Test Name: PredictionEngineTestHarness-1
      *
      * Runs the PredictionEngine against various User Submissions (full user submissions, using all data)
      *
@@ -72,8 +78,10 @@ public class PredictionEngineTestHarness {
 
 
     /**
-     * Thomas Thompson, Test # 4
-     * Test Name: Unit-4
+     * @author Thomas Thompson
+     * Test ID: 4
+     * Test Type: Integration
+     * Test Name: PredictionEngineTestHarness-2
      *
      * Assess the accuracy of predictions for a given set of userIds
      *

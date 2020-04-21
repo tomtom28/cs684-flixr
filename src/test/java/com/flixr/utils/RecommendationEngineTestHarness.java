@@ -30,8 +30,10 @@ public class RecommendationEngineTestHarness {
     }
 
     /**
-     * Thomas Thompson, Test # 1
-     * Test Name: Unit-1
+     * @author Thomas Thompson
+     * Test ID: 1
+     * Test Type: Integration
+     * Test Name: RecEngineTestHarness-1
      *
      * Ensure that RecommendationEngine Runs & Generates a Valid Correlation Matrix
      *
@@ -68,8 +70,10 @@ public class RecommendationEngineTestHarness {
 
 
     /**
-     * Thomas Thompson, Test # 2
-     * Test Name: Unit-2
+     * @author Thomas Thompson
+     * Test ID: 2
+     * Test Type: Integration
+     * Test Name: RecEngineTestHarness-2
      *
      * Run RecommendationEngineHarness to assess run time performance
      * Test Oracle will Compare these run times using a trend line against the O(n) Time Complexity
