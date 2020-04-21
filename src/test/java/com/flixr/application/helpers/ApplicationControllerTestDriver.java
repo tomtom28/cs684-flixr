@@ -2,6 +2,7 @@ package com.flixr.application.helpers;
 
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
+import com.flixr.exceptions.ApiException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -79,37 +80,22 @@ public class ApplicationControllerTestDriver {
      * Author: Zion Whitehall
      * System Test: Add user rating via API call
      */
-    public void addUserRating(int userID, int imdbID, double rating)
+    public void postMovieRating(int userID, int imdbID, double rating) //uses info from applicationcontroller
     {
         // Headers for POST request
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>(); //used for making the JSON
+        map.add("user_id", userID + "");
+        map.add("movie_id", imdbID + "");
+        map.add("grade", rating + "");
+
         // Create POST request
-        String queryURL = API_URL + "/Insert rating";
+        String queryURL = API_URL + "/rating"; //called from README
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<User> response = restTemplate.postForEntity(queryURL, request , User.class);
-        //code for user to insert rating
-        //taken from ratingDAO
-        try
-        {
-            Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO ratings(userId, imdbId, rating) VALUES (?, ?, ?)");
-            stmt.setInt(1, userID);
-            stmt.setInt(2, imdbID);
-            stmt.setDouble(3, rating);
-            // Insert all matrix row entries in 1 batch
-            stmt.executeUpdate();
-            // Close connection
-            String insertedTuple = "(" + userID + "," + imdbID + "," + rating + ")";
-            System.out.println("Insert Query Completed: " + insertedTuple);
-            conn.close();
-        }
-        catch (SQLException e)
-        {
-            System.out.println("Insert Query Failed!");
-        }
+        ResponseEntity<Object> response = restTemplate.postForEntity(queryURL, request , Object.class);
+
     }
 
 

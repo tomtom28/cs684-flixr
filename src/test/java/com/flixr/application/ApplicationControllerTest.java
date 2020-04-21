@@ -5,13 +5,17 @@ import com.flixr.application.helpers.ApplicationControllerTestDriver;
 import com.flixr.application.helpers.ApplicationControllerTestOracle;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
+import com.flixr.exceptions.ApiException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
 import static com.flixr.configuration.ApplicationConstantsTest.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -170,6 +174,65 @@ public class ApplicationControllerTest {
         }
     }
 
+    /**
+     * Author: Zion Whitehall
+     * System Test: Add user rating via API call
+     */
+    @Test
+    void testPostRating()
+    {
+        // Selects known Admin user
+        String userEmail = "jsmith@email.com";
+        String userPassword = "password";
+
+
+        int imdbID = 13442;
+        double rating = 4.0; //true inputs
+
+        User user = applicationControllerTestDriver.signInUser(userEmail, userPassword); //signs in user
+        int userID = user.getUserID(); //gets userID from database
+
+        applicationControllerTestDriver.postMovieRating(userID, imdbID, rating); //goes first because driver is input
+
+        applicationControllerTestOracle.validatePostRating(userID, imdbID, rating); //goes last because oracle is output
+
+    }
+
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: test to see if movies are stored alphabetically
+     */
+    @Test
+    void testMovieAlphabet() //could say this involves code coverage
+    {
+        String userEmail = "jsmith@email.com";
+        String userPassword = "password";
+
+        User user = applicationControllerTestDriver.signInUser(userEmail, userPassword); //signs in user
+        int userID = user.getUserID(); //gets userID from database
+
+        List<MovieWithPrediction> movieWithPredictions = applicationControllerTestDriver.getMovieRecommendations(userID, "a~z"); //called from app controller
+
+        applicationControllerTestOracle.validateMoviePredictionsAlphabetical(movieWithPredictions); //enters in movieswithpredictions list
+
+    }
+
+    /**
+     * Author: Zion Whitehall
+     * ZW System Test: Test of system will detect incorrect password
+     */
+    @Test
+    void testInvalidPassword() //could say this involves code coverage
+    {
+        String userEmail = "jsmith@email.com";
+        String userPassword = "wrongpassword";
+
+
+        assertThrows(HttpClientErrorException.class, () ->applicationControllerTestDriver.signInUser(userEmail, userPassword)); //signs in user
+        //expected is http error message to be thrown from Api because email and password are incorrect, actual is just test driver hitting Api and getting an exception or a success
+
+
+    }
 
 
 }

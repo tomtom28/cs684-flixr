@@ -21,6 +21,12 @@ public class RatingDAO
     public void addMovieRating(int userID, int imdbID, double rating) {
         try {
             Connection conn = DriverManager.getConnection(DB_CONNECTION_URL, DB_USERNAME, DB_PASSWORD);
+            PreparedStatement stmt0 = conn.prepareStatement("DELETE FROM ratings WHERE userID = ? AND imdbID = ?"); //delete if user already entered it
+            stmt0.setInt(1, userID);
+            stmt0.setInt(2, imdbID);
+            // Insert all matrix row entries in 1 batch
+            stmt0.executeUpdate();
+
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO ratings(userId, imdbId, rating) VALUES (?, ?, ?)");
             stmt.setInt(1, userID);
             stmt.setInt(2, imdbID);
