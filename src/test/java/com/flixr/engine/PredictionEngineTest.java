@@ -26,8 +26,10 @@ class PredictionEngineTest {
     private static int NUM_OF_MOVIE_PREDICIONS = 10;
 
     /**
-     * Thomas Thompson, Test # 11
-     * Test Name: Unit-11
+     * @author Thomas Thompson
+     * Test ID: 11
+     * Test Type: Integration
+     * Test Name: PredictionEngineTest-1
      *
      * This test is meant to ensure that the PredictionEngine and its DAOs are properly aligned
      * This can also serve as an integration test

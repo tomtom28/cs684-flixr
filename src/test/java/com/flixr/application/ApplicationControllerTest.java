@@ -46,7 +46,9 @@ public class ApplicationControllerTest {
 
     /**
      * @author Thomas Thompson
-     * TT System Test # 1
+     * Test ID: 15
+     * Test Type: System
+     * Test Name: TT-Api-1
      *
      * Test if the admin user (valid user) can login
      *
@@ -73,7 +75,9 @@ public class ApplicationControllerTest {
 
     /**
      * @author Thomas Thompson
-     * TT System Test # 2
+     * Test ID: 16
+     * Test Type: System
+     * Test Name: TT-Api-2
      *
      * Test Top 10 Movies from API
      *

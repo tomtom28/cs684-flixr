@@ -21,8 +21,10 @@ class RecommendationControllerTest {
     class PredictionEngineTests {
 
         /**
-         * Thomas Thompson, Test # 14
-         * Test Name: Integration-3
+         * @author Thomas Thompson
+         * Test ID: 6
+         * Test Type: Integration
+         * Test Name: RecommendationControllerTest-1
          *
          * Retrieve N number of MoviesWithPredictions, ensure that DB and Engine interfaces are working
          * Note: that it is assumed that the unit tests for PredictionDAO and PredictionEngine are judging the accuracy of the predictions
@@ -59,8 +61,10 @@ class RecommendationControllerTest {
     class RecommendationEngineTests {
 
         /**
-         * Thomas Thompson, Test # 15
-         * Test Name: Integration-4
+         * @author Thomas Thompson
+         * Test ID: 7
+         * Test Type: Integration
+         * Test Name: RecommendationControllerTest-2
          *
          * Retrain the model, ensure that Engine & I/O interfaces are working
          * Note: that it is assumed that the unit tests for RecommendationEngine will assess performance and/or accuracy

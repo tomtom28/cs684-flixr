@@ -11,7 +11,7 @@ import java.util.List;
  * Passed as an input to the RecommendationEngine and PredictionEngine
  *
  */
-public class UserSubmission implements Comparable {
+public class UserSubmission { // implements Comparable {
 
     private int userId;
 
@@ -62,21 +62,21 @@ public class UserSubmission implements Comparable {
     }
 
 
-    /**
-     * Used to sort the UserSubmissions based on UserId
-     * @param userSubmission    UserSubmission
-     * @return  A negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
-     */
-    @Override
-    public int compareTo(Object userSubmission) {
-        // Cast to UserSubmission and compare based on UserId
-        try {
-            UserSubmission castedUserSubmission = (UserSubmission) userSubmission;
-            return this.getUserId() - castedUserSubmission.getUserId();
-        } catch (ClassCastException e) {
-            System.out.println("Unable to compare UserSubmissions!");
-            e.printStackTrace();
-        }
-        return 0;
-    }
+//    /**
+//     * Used to sort the UserSubmissions based on UserId
+//     * @param userSubmission    UserSubmission
+//     * @return  A negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+//     */
+//    @Override
+//    public int compareTo(Object userSubmission) {
+//        // Cast to UserSubmission and compare based on UserId
+//        try {
+//            UserSubmission castedUserSubmission = (UserSubmission) userSubmission;
+//            return this.getUserId() - castedUserSubmission.getUserId();
+//        } catch (ClassCastException e) {
+//            System.out.println("Unable to compare UserSubmissions!");
+//            e.printStackTrace();
+//        }
+//        return 0;
+//    }
 }

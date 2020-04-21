@@ -22,8 +22,10 @@ public class EngineDAOTest {
     private static int TEST_USER_ID = 1;
 
     /**
-     * Thomas Thompson, Test # 5
-     * Test Name: Unit-5
+     * @author Thomas Thompson
+     * Test ID: 8
+     * Test Type: Integration
+     * Test Name: EngineDAOTest-1
      *
      * Ensure that the "User Submission" (i.e. the movies that a given user rated) are correctly generated for a valid UserId
      * This can also serve as an integration test
@@ -73,8 +75,10 @@ public class EngineDAOTest {
 
 
     /**
-     * Thomas Thompson, Test # 6
-     * Test Name: Unit-6
+     * @author Thomas Thompson
+     * Test ID: 9
+     * Test Type: Integration
+     * Test Name: EngineDAOTest-2
      *
      * Ensure that all "Movies NOT Rated By User" are accurate for a valid UserId
      */

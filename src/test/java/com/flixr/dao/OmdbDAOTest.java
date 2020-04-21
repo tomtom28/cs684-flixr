@@ -19,8 +19,10 @@ class OmdbDAOTest {
     class TestOmdbApiQueries {
 
         /**
-         * Thomas Thompson, Test # 7
-         * Test Name: Unit-7
+         * @author Thomas Thompson
+         * Test ID: 12
+         * Test Type: Unit
+         * Test Name: OmdbDAOTest-1
          *
          * Ensure that OMDB API is successfully queried & that correct attributes are returned for the selected ImdbId
          */
@@ -45,8 +47,10 @@ class OmdbDAOTest {
         }
 
         /**
-         * Thomas Thompson, Test # 8
-         * Test Name: Unit-8
+         * @author Thomas Thompson
+         * Test ID: 13
+         * Test Type: Unit
+         * Test Name: OmdbDAOTest-2
          *
          * Ensure that an exception is thrown if an invalid ImdbId is sent to the OmbdDAO
          */
@@ -60,8 +64,10 @@ class OmdbDAOTest {
     }
 
     /**
-     * Thomas Thompson, Test # 9
-     * Test Name: Unit-9
+     * @author Thomas Thompson
+     * Test ID: 14
+     * Test Type: Unit
+     * Test Name: OmdbDAOTest-3
      *
      * Ensure that the OmdbDAO supports conversions between movieId (i.e. integer format) and ImdbId (i.e. string format)
      */

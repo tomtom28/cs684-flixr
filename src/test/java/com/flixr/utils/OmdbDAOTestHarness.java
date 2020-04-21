@@ -36,8 +36,10 @@ class OmdbDAOTestHarness {
 
 
     /**
-     * Thomas Thompson, Test # 16
-     * Test Name: Integration-5
+     * @author Thomas Thompson
+     * Test ID: 5
+     * Test Type: Integration
+     * Test Name: OmdbDAOTestHarness-1
      *
      * Collect a list of MovieIds (from CSV file) and query the 3rd party OMDB API to get all movie data
      * All outputs are collected into a CSV output file
@@ -131,6 +133,11 @@ class OmdbDAOTestHarness {
     }
 
 
+    /**
+     * @author Thomas Thompson
+     *
+     * Test Oracle for OmdbDAOHarness
+     */
     private class OmdbDAOHarnessTestOracle {
 
         // Instance Variables
