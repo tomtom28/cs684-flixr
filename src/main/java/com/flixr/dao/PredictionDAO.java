@@ -60,8 +60,8 @@ public class PredictionDAO implements IPredictionDAO {
             return correlationMatrix[i][j];
 
         } catch (IndexOutOfBoundsException | NullPointerException e) {
-            System.out.println("Matrix Index was Invalid!");
-            System.out.println("Assuming correlation to be 0.");
+            //System.out.println("Matrix Index was Invalid!");
+            //System.out.println("Assuming correlation to be 0.");
 //            e.printStackTrace();
             return 0;
         }

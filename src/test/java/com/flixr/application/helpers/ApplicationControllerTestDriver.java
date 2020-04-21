@@ -2,6 +2,7 @@ package com.flixr.application.helpers;
 
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
+import com.flixr.exceptions.ApiException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -10,9 +11,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.flixr.configuration.ApplicationConstants.*;
 import static com.flixr.configuration.ApplicationConstantsTest.API_URL;
 
 /**
@@ -70,7 +76,27 @@ public class ApplicationControllerTestDriver {
 
 
     // TODO - Keep adding your helper methods for GET / POST requests here ...
+    /**
+     * Author: Zion Whitehall
+     * System Test: Add user rating via API call
+     */
+    public void postMovieRating(int userID, int imdbID, double rating) //uses info from applicationcontroller
+    {
+        // Headers for POST request
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>(); //used for making the JSON
+        map.add("user_id", userID + "");
+        map.add("movie_id", imdbID + "");
+        map.add("grade", rating + "");
 
+        // Create POST request
+        String queryURL = API_URL + "/rating"; //called from README
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        ResponseEntity<Object> response = restTemplate.postForEntity(queryURL, request , Object.class);
+
+    }
 
 
 
