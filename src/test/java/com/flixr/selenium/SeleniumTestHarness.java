@@ -16,8 +16,6 @@ import static com.flixr.selenium.helpers.SeleniumConstants.WEB_DRIVER_LOCATION;
 import static org.junit.Assert.fail;
 
 /**
- * @author Thomas Thompson
- *
  * Selenium Test Harness for Full System Testing
  *
  * NOTE:
@@ -46,10 +44,6 @@ public class SeleniumTestHarness {
     void initalize() {
         seleniumTestDriver = new SeleniumTestDriver();
     }
-//    @AfterEach
-//    void closeWebDriver() {
-//        webDriver.quit(); // Closes chrome browser
-//    }
 
     /**
      * @author Thomas Thompson
@@ -59,6 +53,7 @@ public class SeleniumTestHarness {
     @Test
     void testHomePage() {
         try {
+
             // Open chrome browser
             WebDriver webDriver = new ChromeDriver();
 
@@ -67,10 +62,13 @@ public class SeleniumTestHarness {
 
             // Ensure that Title exists
             webDriver.findElement(By.className("title"));
+
+            // Close chrome browser
+            webDriver.quit();
+
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Unable to Load HomePage: " + e.getMessage());
-            System.out.println("*** Ensure you are running the app.js in /frontend folder! ***");
+            fail("Unable to Load HomePage: Ensure you are running the app.js in the /frontend folder!");
         }
     }
 
@@ -98,6 +96,9 @@ public class SeleniumTestHarness {
 
             // Navigate to "Admin" page
             adminLink.click();
+
+            // Close chrome browser
+            webDriver.quit();
 
         } catch(Exception e) {
             e.printStackTrace();
