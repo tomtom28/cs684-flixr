@@ -250,5 +250,8 @@ public class SeleniumTestHarness {
     // TIP:
     // User  seleniumTestDriver.waitXseconds(3); to wait for 3 (or more) seconds for webpages to load
 
+    // NOTE:
+    // You MUST be running "node app.js" from "/frontend" folder BEFORE you can test full system
+
 
 }
