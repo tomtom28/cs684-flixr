@@ -58,7 +58,7 @@ Within your IDE:
 
   - Click the green play button in IntelliJ to run the project.
   
-  - The API will be running GET and POST requests on [localhost:8080](http://localhost:8080/)
+  - The API will be running GET and POST requests on [localhost:3001](http://localhost:3001/)
 
 
 #### Run the NodeJS Frontend:
