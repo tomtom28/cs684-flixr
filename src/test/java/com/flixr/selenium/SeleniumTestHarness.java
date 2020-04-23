@@ -50,6 +50,9 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 21
+     * Test Type: System
+     * Test Name: TT-Selenium-1
      *
      * Verify that homepage can load
      */
@@ -78,6 +81,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 22
+     * Test Type: System
+     * Test Name: TT-Selenium-2
+     *
      * Verify that the Admin User is able to see link to Admin Page
      */
     @Test
@@ -108,6 +115,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 23
+     * Test Type: System
+     * Test Name: TT-Selenium-3
+     *
      * Verify that non-Admin User is NOT able to see link to Admin Page
      */
     @Test
@@ -139,7 +150,11 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
-     * Verify that a user is able to search for a given movie title
+     * Test ID: 24
+     * Test Type: System
+     * Test Name: TT-Selenium-4
+     *
+     * Verify that a user is able to search for a given movie title on the Rating Page search box
      */
     @Test
     void testMovieRatingSearchBox() {
@@ -183,6 +198,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 25
+     * Test Type: System
+     * Test Name: TT-Selenium-5
+     *
      * Verify that an older user is able to search for a given R-rated movie title
      * Verify that a younger user is NOT able to search for the same movie title (i.e. child blocks)
      */
