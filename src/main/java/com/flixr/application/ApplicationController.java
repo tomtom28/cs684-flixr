@@ -282,9 +282,9 @@ public class ApplicationController {
 		RecommendationController recommendationController = new RecommendationController();
 		try {
 			recommendationController.reTrainModel();
-			return "Model is Now Training... Please Wait...";
+			return "Success. Model is now training... Please Wait...";
 		} catch (EngineException e) {
-			return "Error in Training: " + e.getEngineMessage();
+			return "Error. Unable to Train model: " + e.getEngineMessage();
 		}
 
 	}
