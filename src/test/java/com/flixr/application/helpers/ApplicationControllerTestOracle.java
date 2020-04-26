@@ -1,6 +1,5 @@
 package com.flixr.application.helpers;
 
-import com.flixr.beans.MovieStats;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
 
@@ -26,7 +25,7 @@ public class ApplicationControllerTestOracle {
      *
      * @param userEmail     Known Input: User Email Address
      * @param userPassword  Known Input: User Password
-     * @param user          SUT Output: User object returned from API
+     * @param user          Test Output: User object returned from API
      */
     public void validateUserEmailAndPassword(String userEmail, String userPassword, User user) {
         System.out.println("Validating user: " + userEmail + "...");
@@ -40,7 +39,7 @@ public class ApplicationControllerTestOracle {
      * Validates whether number of movies matches the expected count
      *
      * @param expectedCount                 Known Input: Expected # of Movies
-     * @param listOfMovieWithPredictions    SUT Output: User Password
+     * @param listOfMovieWithPredictions    Test Output: User Password
      */
     public void validateMovieCount(int expectedCount, List<MovieWithPrediction> listOfMovieWithPredictions) {
         System.out.println("\nValidating recommended movie count...");
@@ -53,7 +52,7 @@ public class ApplicationControllerTestOracle {
      * @author Thomas Thompson
      * Validates whether movies are sorted highest to lowest order
      *
-     * @param listOfMovieWithPredictions    SUT Output: List of movie recommendations
+     * @param listOfMovieWithPredictions    Test Output: User Password
      */
     public void validateMoviePredictionsAreHighToLow(List<MovieWithPrediction> listOfMovieWithPredictions) {
         System.out.println("\nValidating recommended movies are in highest to lowest predicted rating order...");
@@ -68,69 +67,6 @@ public class ApplicationControllerTestOracle {
 
     }
 
-    /**
-     * @author Thomas Thompson
-     * Validates whether movies suitable for under-aged users (i.e. no movies have restricted ratings)
-     *
-     * @param listOfMovieWithPredictions    SUT Output: List of movie recommendations
-     */
-    public void validateMovieRecommendationsAreAgeRestricted(List<MovieWithPrediction> listOfMovieWithPredictions) {
-        System.out.println("\nValidating recommended movies are suitable for an under-aged user...");
-
-        // Iterate over all movies in the list
-        for (MovieWithPrediction movieWithPrediction : listOfMovieWithPredictions) {
-            System.out.println("Movie Name: " + movieWithPrediction.getMoviename() + ", " + "Age Rating: " + movieWithPrediction.getAgerating());
-            // Check if current movie's age rating is part of the restricted list
-            boolean isAgeRestrictedMovie = RATINGS_NOT_FOR_UNDER_18_YEARS_OLD.contains(movieWithPrediction.getAgerating());
-            assertFalse(isAgeRestrictedMovie, "An age-restricted movie was found!");
-        }
-
-    }
-
-    /**
-     * @author Thomas Thompson
-     * Validates whether given list of MovieStats is sorted properly
-     *
-     * @param listOfMovieStats   SUT Output: List of movie recommendations
-     * @param sortType           Test Input: Sort Type (ex. "a~z", "z~a", "count", "rating")
-     */
-    public void validateMovieStatsAreSortedCorrectly(List<MovieStats> listOfMovieStats, String sortType) {
-        System.out.println("\nValidating that list of MovieStats is sorted by '" + sortType +"'...");
-
-        // Get first entry
-        MovieStats previousMovieStats = listOfMovieStats.get(0);
-
-        for (MovieStats movieStats : listOfMovieStats) {
-
-            // Collect name fields
-            String prevMovieName = previousMovieStats.getTitle();
-            String currentMovieName = movieStats.getTitle();
-
-            System.out.println("Comparing '" + prevMovieName + "' with '" + currentMovieName + "'");
-
-            // Validate based on sort types
-            if (sortType.equalsIgnoreCase("a~z")) {
-                assertTrue(prevMovieName.compareTo(currentMovieName) >= 0, "Movies are not in A to Z order!");
-            }
-            else if (sortType.equalsIgnoreCase("z~a")) {
-                assertTrue(prevMovieName.compareTo(currentMovieName) <= 0, "Movies are not in Z to A order!");
-            }
-            else if (sortType.equalsIgnoreCase("count")) {
-                int prevMovieCount = previousMovieStats.getCount();
-                int currentMovieCount = movieStats.getCount();
-                assertTrue(prevMovieCount >= currentMovieCount, "Movies are not sorted by highest to lowest Rating Counts!");
-            }
-            else {
-                double prevMovieRating = previousMovieStats.getRating();
-                double currentMovieRating = movieStats.getRating();
-                assertTrue(prevMovieRating >= currentMovieRating, "Movies are not sorted by highest to lowest Rating Counts!");
-            }
-
-            // Update previous movie
-            previousMovieStats = movieStats;
-        }
-
-    }
 
 
 
@@ -140,6 +76,7 @@ public class ApplicationControllerTestOracle {
      * Author: Zion Whitehall
      * ZW System Test: test to see if movies are stored alphabetically
      *
+     * @param expectedMovie
      * @param listOfMovieWithPredictions
      */
     public void validateMoviePredictionsAlphabetical( List<MovieWithPrediction> listOfMovieWithPredictions)
