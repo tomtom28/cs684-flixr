@@ -1,8 +1,11 @@
 package com.flixr.application.helpers;
 
+import com.flixr.beans.MovieStats;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
 import com.flixr.exceptions.ApiException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,6 +18,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,10 +73,60 @@ public class ApplicationControllerTestDriver {
         String queryURL = API_URL + "/recommend/" + userId + "/" + sortType;
         ResponseEntity<MovieWithPrediction[]> response = restTemplate.getForEntity(queryURL, MovieWithPrediction[].class);
 
-        // Collect Response form POST request
+        // Collect Response from request
         List<MovieWithPrediction> listOfMoviePredictions = Arrays.asList(response.getBody());
         return listOfMoviePredictions;
     }
+
+    /**
+     * @author Thomas Thompson
+     * Performs a GET request to the Java API to retrain the ML model
+     *
+     * @return  Success or Error message
+     */
+    public String reTrainModel() {
+
+        // Create GET request
+        RestTemplate restTemplate = new RestTemplate();
+        String queryURL = API_URL + "/admin/re_train";
+        ResponseEntity<String> response = restTemplate.getForEntity(queryURL, String.class);
+
+        // Return response from API
+        return response.getBody();
+    }
+
+
+    /**
+     * @author Thomas Thompson
+     * Performs a GET request to the Java API get back MovieStats
+     *
+     * @param sortType  Sorting Method of MovieStats (ex. "a~z", "z~a", "count", "rating")
+     * @return  List of MovieStats
+     */
+    public List<MovieStats> getListOfMovieStats(String sortType) throws Exception {
+
+        // Create GET request
+        RestTemplate restTemplate = new RestTemplate();
+        String queryURL = API_URL + "/admin/analyze/" + sortType;
+        ResponseEntity<String> response = restTemplate.getForEntity(queryURL, String.class);
+
+        // Parse JSON response
+        List<MovieStats> movieStatsList = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray(response.getBody());
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            // Create MovieStats
+            int imdbId = jsonObject.getInt("movie_id");
+            String movieTitle = jsonObject.getString("title");
+            int totalRatingCount = jsonObject.getInt("count");
+            double averageRating = jsonObject.getDouble("rating");
+            MovieStats movieStats = new MovieStats(imdbId, movieTitle, totalRatingCount, averageRating);
+            movieStatsList.add(movieStats);
+        }
+
+        return movieStatsList;
+    }
+
 
 
     // TODO - Keep adding your helper methods for GET / POST requests here ...
