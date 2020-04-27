@@ -50,6 +50,9 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 21
+     * Test Type: System
+     * Test Name: TT-Selenium-1
      *
      * Verify that homepage can load
      */
@@ -78,6 +81,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 22
+     * Test Type: System
+     * Test Name: TT-Selenium-2
+     *
      * Verify that the Admin User is able to see link to Admin Page
      */
     @Test
@@ -108,6 +115,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 23
+     * Test Type: System
+     * Test Name: TT-Selenium-3
+     *
      * Verify that non-Admin User is NOT able to see link to Admin Page
      */
     @Test
@@ -139,7 +150,11 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
-     * Verify that a user is able to search for a given movie title
+     * Test ID: 24
+     * Test Type: System
+     * Test Name: TT-Selenium-4
+     *
+     * Verify that a user is able to search for a given movie title on the Rating Page search box
      */
     @Test
     void testMovieRatingSearchBox() {
@@ -183,6 +198,10 @@ public class SeleniumTestHarness {
 
     /**
      * @author Thomas Thompson
+     * Test ID: 25
+     * Test Type: System
+     * Test Name: TT-Selenium-5
+     *
      * Verify that an older user is able to search for a given R-rated movie title
      * Verify that a younger user is NOT able to search for the same movie title (i.e. child blocks)
      */
@@ -216,21 +235,25 @@ public class SeleniumTestHarness {
 
             // Search for Movie for both users
             seleniumTestDriver.waitXseconds(3); // wait 3 seconds
-            seleniumTestDriver.searchForMovieToRateByName(webDriverForYoungerUser, movieName);
             seleniumTestDriver.searchForMovieToRateByName(webDriverForOlderUser, movieName);
+            seleniumTestDriver.searchForMovieToRateByName(webDriverForYoungerUser, movieName);
+
+            // Movie name should appear for Older User
+            String currentMovieTitleOfOlderUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForOlderUser);
+            assertEquals(movieName, currentMovieTitleOfOlderUser); // YES equals for older user
 
             // Movie name should NOT appear for Young User
             seleniumTestDriver.waitXseconds(3); // wait 3 seconds
             String currentMovieTitleOfYoungUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForYoungerUser);
             assertNotEquals(movieName, currentMovieTitleOfYoungUser); // NOT equals for younger user
 
-            // Movie name should appear for Older User
-            String currentMovieTitleOfOlderUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForOlderUser);
-            assertEquals(movieName, currentMovieTitleOfOlderUser); // YES equals for older user
+            // Log out BOTH users
+            seleniumTestDriver.logOutUser(webDriverForOlderUser);
+            seleniumTestDriver.logOutUser(webDriverForYoungerUser);
 
             // Close BOTH chrome browsers
-            webDriverForYoungerUser.quit();
             webDriverForOlderUser.quit();
+            webDriverForYoungerUser.quit();
 
         } catch(Exception e) {
             e.printStackTrace();

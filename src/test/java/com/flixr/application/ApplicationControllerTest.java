@@ -3,9 +3,11 @@ package com.flixr.application;
 import com.flixr.Application;
 import com.flixr.application.helpers.ApplicationControllerTestDriver;
 import com.flixr.application.helpers.ApplicationControllerTestOracle;
+import com.flixr.beans.MovieStats;
 import com.flixr.beans.MovieWithPrediction;
 import com.flixr.beans.User;
 import com.flixr.exceptions.ApiException;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.util.List;
 
 import static com.flixr.configuration.ApplicationConstantsTest.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Green Team
@@ -109,6 +110,121 @@ public class ApplicationControllerTest {
 
             // Check that movies are sorted highest to lowest rating
             applicationControllerTestOracle.validateMoviePredictionsAreHighToLow(movieWithPredictions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * @author Thomas Thompson
+     * Test ID: 17
+     * Test Type: System
+     * Test Name: TT-Api-3
+     *
+     * Test that recommendations will NOT contain any restricted movie for a user under 18
+     *
+     * Criteria:
+     * 1) API will return a list of Top 100 Movie Recommendations
+     * 2) None of the movies should have a restricted rated, controlled by application age restrictions
+     */
+    @Test
+    void testUnderAgedUserMovieRecommendations() {
+
+        // Selects known Admin user
+        String userEmail = "kid@email.com";
+        String userPassword = "password";
+
+        try {
+            // Login User using test driver and get back User object
+            User user = applicationControllerTestDriver.signInUser(userEmail, userPassword);
+
+            // Get list of Top 100 movies (highest available amount of predictions)
+            List<MovieWithPrediction> movieWithPredictions = applicationControllerTestDriver.getMovieRecommendations(user.getUserID(), "top100");
+
+            // Check that we get correct number of movie recommendations
+            applicationControllerTestOracle.validateMovieCount(100, movieWithPredictions);
+
+            // Check that movies are NOT age restricted (as defined by ApplicationConstants.RATINGS_NOT_FOR_UNDER_18_YEARS_OLD)
+            applicationControllerTestOracle.validateMovieRecommendationsAreAgeRestricted(movieWithPredictions);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * @author Thomas Thompson
+     * Test ID: 18
+     * Test Type: System
+     * Test Name: TT-Api-4
+     *
+     * Admin user is able to Re Train the ML model via an API call
+     *
+     * Criteria:
+     * Receive a Success message from the API that ML training has completed in RecommendationEngine
+     */
+    @Test
+    @Ignore // This test is ignored unless it is explicitly called (as it takes a very long time to run)
+    void testReTrainingOfRecEngine() {
+
+        // Selects known Admin user
+        String userEmail = ADMIN_EMAIL;
+        String userPassword = ADMIN_PASSWORD;
+
+        try {
+            // Admin User
+            User user = applicationControllerTestDriver.signInUser(userEmail, userPassword);
+
+            // Re Train the RecommendationEngine
+            String response = applicationControllerTestDriver.reTrainModel();
+
+            // Check for "Success" message
+            boolean isSuccessful = response.contains("Success");
+            assertTrue(isSuccessful, "Unable to trigger re-training!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * @author Thomas Thompson
+     * Test ID: 19
+     * Test Type: System
+     * Test Name: TT-Api-5
+     *
+     * Admin user is able to receive the MovieStats information, sorted by top average rating
+     *
+     * Criteria:
+     * 1) Admin user is able to query the API for the MovieStats information
+     * 2) The MovieStats are sorted by the Top Average Rating (in descending order)
+     */
+    @Test
+    @Ignore // This test is ignored unless it is explicitly called (as it takes a very long time to run)
+    void testMovieStatsByAverageRating() {
+
+        // Selects known Admin user
+        String userEmail = ADMIN_EMAIL;
+        String userPassword = ADMIN_PASSWORD;
+
+        // Select sort type (ex. "a~z", "z~a", "count", "rating")
+        String sortType = "rating";
+
+        try {
+            // Admin User Login
+            applicationControllerTestDriver.signInUser(userEmail, userPassword);
+
+            // Query the API for the MovieStats by the Top Average Rating
+            List<MovieStats> listOfMovieStats = applicationControllerTestDriver.getListOfMovieStats(sortType);
+
+            // Verify that the MovieStats are sorted by sortType="rating"
+            applicationControllerTestOracle.validateMovieStatsAreSortedCorrectly(listOfMovieStats, sortType);
 
         } catch (Exception e) {
             e.printStackTrace();
