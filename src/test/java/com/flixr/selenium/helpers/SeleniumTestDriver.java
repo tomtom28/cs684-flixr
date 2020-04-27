@@ -158,5 +158,18 @@ public class SeleniumTestDriver {
         int DEBUG = 0;
     }
 
+    /**
+     * Logs out the user by clicking the "log out" button
+     * @author Thomas Thompson
+     * @param webDriver     Reference to Selenium Web Driver
+     */
+    public void logOutUser(WebDriver webDriver) throws TestException {
+
+        // Find & click the logout button
+        WebElement logoutBtn = webDriver.findElement(By.linkText("Logout"));
+        logoutBtn.click();
+
+    }
+
 
 }

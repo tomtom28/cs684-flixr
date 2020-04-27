@@ -235,21 +235,25 @@ public class SeleniumTestHarness {
 
             // Search for Movie for both users
             seleniumTestDriver.waitXseconds(3); // wait 3 seconds
-            seleniumTestDriver.searchForMovieToRateByName(webDriverForYoungerUser, movieName);
             seleniumTestDriver.searchForMovieToRateByName(webDriverForOlderUser, movieName);
+            seleniumTestDriver.searchForMovieToRateByName(webDriverForYoungerUser, movieName);
+
+            // Movie name should appear for Older User
+            String currentMovieTitleOfOlderUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForOlderUser);
+            assertEquals(movieName, currentMovieTitleOfOlderUser); // YES equals for older user
 
             // Movie name should NOT appear for Young User
             seleniumTestDriver.waitXseconds(3); // wait 3 seconds
             String currentMovieTitleOfYoungUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForYoungerUser);
             assertNotEquals(movieName, currentMovieTitleOfYoungUser); // NOT equals for younger user
 
-            // Movie name should appear for Older User
-            String currentMovieTitleOfOlderUser = seleniumTestDriver.getCurrentMovieNameBeingRated(webDriverForOlderUser);
-            assertEquals(movieName, currentMovieTitleOfOlderUser); // YES equals for older user
+            // Log out BOTH users
+            seleniumTestDriver.logOutUser(webDriverForOlderUser);
+            seleniumTestDriver.logOutUser(webDriverForYoungerUser);
 
             // Close BOTH chrome browsers
-            webDriverForYoungerUser.quit();
             webDriverForOlderUser.quit();
+            webDriverForYoungerUser.quit();
 
         } catch(Exception e) {
             e.printStackTrace();
